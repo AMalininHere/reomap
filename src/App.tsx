@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
-import Map from './core/Map';
-import { LatLng } from './core/models';
-import Tiles from './core/Tiles';
+import { LatLng, Map, Tiles } from './core';
 
 function osm(x: number, y: number, z: number) {
   const s = String.fromCharCode(97 + (x + y + z) % 3)
