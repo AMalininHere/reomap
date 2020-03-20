@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { LatLng } from './models';
 import { lng2tile, lat2tile } from './utils/geo-fns';
 import { useMapContext } from './Context';
@@ -6,32 +6,28 @@ import { useMapContext } from './Context';
 const TILE_SIZE = 256;
 
 function useTileValues(center: LatLng, width: number, height: number, zoom: number) {
-  const result = useMemo(() => {
-    const tileCenterX = lng2tile(center.lng, zoom);
-    const tileCenterY = lat2tile(center.lat, zoom);
+  const tileCenterX = lng2tile(center.lng, zoom);
+  const tileCenterY = lat2tile(center.lat, zoom);
 
-    const halfWidth = width / 2 / 256.0;
-    const halfHeight = height / 2 / 256.0;
+  const halfWidth = width / 2 / 256.0;
+  const halfHeight = height / 2 / 256.0;
 
-    const tileMinX = Math.floor(tileCenterX - halfWidth);
-    const tileMaxX = Math.floor(tileCenterX + halfWidth);
+  const tileMinX = Math.floor(tileCenterX - halfWidth);
+  const tileMaxX = Math.floor(tileCenterX + halfWidth);
 
-    const tileMinY = Math.floor(tileCenterY - halfHeight);
-    const tileMaxY = Math.floor(tileCenterY + halfHeight);
+  const tileMinY = Math.floor(tileCenterY - halfHeight);
+  const tileMaxY = Math.floor(tileCenterY + halfHeight);
 
-    return {
-      tileCenterX,
-      tileCenterY,
+  return {
+    tileCenterX,
+    tileCenterY,
 
-      tileMinX,
-      tileMaxX,
+    tileMinX,
+    tileMaxX,
 
-      tileMinY,
-      tileMaxY,
-    };
-  }, [center, width, height, zoom]);
-
-  return result;
+    tileMinY,
+    tileMaxY,
+  };
 }
 
 type TileProvider = (x: number, y: number, z: number) => string;
