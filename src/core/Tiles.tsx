@@ -1,19 +1,9 @@
 import React, { useMemo } from 'react';
 import { LatLng } from './models';
 import { lng2tile, lat2tile } from './utils/geo-fns';
+import { useMapContext } from './Context';
 
 const TILE_SIZE = 256;
-
-function osm(x: number, y: number, z: number) {
-  const s = String.fromCharCode(97 + (x + y + z) % 3)
-  return `https://${s}.tile.openstreetmap.org/${z}/${x}/${y}.png`
-}
-
-
-function ocm(x: number, y: number, z: number) {
-  const s = String.fromCharCode(97 + (x + y + z) % 3)
-  return `https://${s}.tile.thunderforest.com/cycle/${z}/${x}/${y}.png`
-}
 
 function useTileValues(center: LatLng, width: number, height: number, zoom: number) {
   const result = useMemo(() => {
@@ -44,11 +34,10 @@ function useTileValues(center: LatLng, width: number, height: number, zoom: numb
   return result;
 }
 
+type TileProvider = (x: number, y: number, z: number) => string;
+
 interface Props {
-  center: LatLng;
-  zoom: number;
-  width: number;
-  height: number;
+  provider: TileProvider;
 }
 
 function Tiles(props: Props) {
@@ -57,7 +46,7 @@ function Tiles(props: Props) {
     zoom,
     width,
     height,
-  } = props;
+  } = useMapContext();
 
   const {
     tileCenterX,
@@ -75,6 +64,7 @@ function Tiles(props: Props) {
   const xMax = Math.min(tileMaxX, Math.pow(2, zoom) - 1);
   const yMax = Math.min(tileMaxY, Math.pow(2, zoom) - 1);
 
+  const { provider } = props;
   const tiles: React.ReactNode[] = [];
 
   for (let x = xMin; x <= xMax; ++x) {
@@ -82,7 +72,7 @@ function Tiles(props: Props) {
       tiles.push(
         <img
           key={`${x}-${y}-${zoom}`}
-          src={osm(x, y, zoom)}
+          src={provider(x, y, zoom)}
           loading="lazy"
           style={{
             position: 'absolute',

@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import Tiles from './Tiles';
 import GeoJson from './GeoJson';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { Point, LatLng } from './models';
+import { MapProvider } from './Context';
 
 import data from './test.json';
 
@@ -14,17 +14,6 @@ function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
   );
 }
 
-export interface Props {
-  width: number;
-  height: number;
-  zoom: number;
-  center: LatLng;
-
-  onChangeCenterZoom?: (center: LatLng, zoom: number) => any;
-}
-
-
-
 const absMinLatLng = new LatLng(
   tile2lat(Math.pow(2, 10), 10),
   tile2lng(0, 10)
@@ -34,6 +23,17 @@ const absMaxLatLng = new LatLng(
   tile2lat(0, 10),
   tile2lng(Math.pow(2, 10), 10)
 );
+
+export interface Props {
+  width: number;
+  height: number;
+  zoom: number;
+  center: LatLng;
+
+  onChangeCenterZoom?: (center: LatLng, zoom: number) => any;
+
+  children: React.ReactNode | React.ReactNode[]
+}
 
 function Map(props: Props) {
   const {
@@ -109,18 +109,20 @@ function Map(props: Props) {
   };
 
   return (
-    <div
-      style={{ width, height, position: 'relative', margin: '0 auto', overflow: 'hidden' }}
-      ref={containerRef}
-      onWheel={handleWheel}
-      onMouseDown={handleMouseDown}
-      onMouseLeave={handleMouseUp}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleMouseMove}
-    >
-      <Tiles center={center} zoom={zoom} height={height} width={width} />
-      <GeoJson latLngToPixel={latLngToPixel} data={data as GeoJSON.GeoJSON} />
-    </div>
+    <MapProvider value={{ width, height, center, zoom }}>
+      <div
+        style={{ width, height, position: 'relative', margin: '0 auto', overflow: 'hidden' }}
+        ref={containerRef}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseUp}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+      >
+        {props.children}
+        <GeoJson latLngToPixel={latLngToPixel} data={data as GeoJSON.GeoJSON} />
+      </div>
+    </MapProvider>
   );
 }
 
