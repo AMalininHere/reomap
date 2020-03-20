@@ -100,11 +100,15 @@ function Map(props: Props) {
       return;
     }
 
-    const newCenter = pixelToLatLng(getMousePoint(containerRef.current!, e));
     if (e.deltaY > 0) {
       props.onChangeCenterZoom(center, zoom - 1);
     } else {
-      props.onChangeCenterZoom(newCenter, zoom + 1);
+      const mousePos = pixelToLatLng(getMousePoint(containerRef.current!, e));
+      const nextCenter = new LatLng(
+        (center.lat + mousePos.lat) / 2,
+        (center.lng + mousePos.lng) / 2
+      )
+      props.onChangeCenterZoom(nextCenter, zoom + 1);
     }
   };
 
