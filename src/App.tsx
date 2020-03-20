@@ -37,6 +37,8 @@ function App() {
       </Map>
       <div>
         <span>zoom: {zoom}</span>
+        <button onClick={() => setZoom(z => z + 1)}>+</button>
+        <button onClick={() => setZoom(z => z - 1)}>-</button>
       </div>
     </div>
   );
