@@ -13,6 +13,10 @@ function ocm(x: number, y: number, z: number) {
   return `https://${s}.tile.thunderforest.com/cycle/${z}/${x}/${y}.png`
 }
 
+function wikimedia(x: number, y: number, z: number) {
+  return `https://maps.wikimedia.org/osm-intl/${z}/${x}/${y}.png`;
+}
+
 function App() {
   const [center, setCenter] = useState(new LatLng(55.417, 85.276));
   const [zoom, setZoom] = useState(6);
@@ -29,7 +33,7 @@ function App() {
         width={800}
         height={500}
       >
-        <Tiles provider={ocm} />
+        <Tiles provider={wikimedia} />
       </Map>
       <div>
         <span>zoom: {zoom}</span>
