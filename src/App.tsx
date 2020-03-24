@@ -28,7 +28,9 @@ function App() {
         center={center}
         onChangeCenterZoom={(c, z) => {
           setCenter(c);
-          setZoom(z);
+          if (z > 4 && z < 16) {
+            setZoom(z);
+          }
         }}
         width={800}
         height={500}
