@@ -9,10 +9,6 @@ function makeSvgPath(points: Point[]) {
     .join(' ');
 }
 
-interface Props {
-  data: GeoJSON;
-}
-
 function findLines(data: GeoJSON) {
   const lines: LineString[] = [];
 
@@ -27,6 +23,10 @@ function findLines(data: GeoJSON) {
   }
 
   return lines;
+}
+
+interface Props {
+  data: GeoJSON;
 }
 
 function GeoJson(props: Props) {
