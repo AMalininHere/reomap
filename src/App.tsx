@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import { LatLng, Map, Tiles } from './core';
+import data from './test.json';
+import { LatLng, Map, Tiles, GeoJson } from './core';
 
 function osm(x: number, y: number, z: number) {
   const s = String.fromCharCode(97 + (x + y + z) % 3)
@@ -36,6 +37,7 @@ function App() {
         height={500}
       >
         <Tiles provider={wikimedia} />
+        <GeoJson data={data as GeoJSON.GeoJSON} />
       </Map>
       <div>
         <span>zoom: {zoom}</span>

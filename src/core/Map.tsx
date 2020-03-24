@@ -1,10 +1,7 @@
 import React, { useRef } from 'react';
-import GeoJson from './GeoJson';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { Point, LatLng } from './models';
 import { MapProvider } from './Context';
-
-import data from './test.json';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
   const elementRect = domElement.getBoundingClientRect();
@@ -23,6 +20,32 @@ const absMaxLatLng = new LatLng(
   tile2lat(0, 10),
   tile2lng(Math.pow(2, 10), 10)
 );
+
+const pixelToLatLng = (width: number, height: number, zoom: number, center: LatLng, pixel: Point) => {
+  const pointDiffX = (pixel.x - width / 2) / 256.0;
+  const pointDiffY = (pixel.y - height / 2) / 256.0;
+
+  const tileX = lng2tile(center.lng, zoom) + pointDiffX;
+  const tileY = lat2tile(center.lat, zoom) + pointDiffY;
+
+  return new LatLng(
+    Math.max(absMinLatLng.lat, Math.min(absMaxLatLng.lat, tile2lat(tileY, zoom))),
+    Math.max(absMinLatLng.lng, Math.min(absMaxLatLng.lng, tile2lng(tileX, zoom)))
+  );
+}
+
+const latLngToPixel = (width: number, height: number, zoom: number, center: LatLng, latLng: LatLng) => {
+  const tileCenterX = lng2tile(center.lng, zoom);
+  const tileCenterY = lat2tile(center.lat, zoom);
+
+  const tileX = lng2tile(latLng.lng, zoom);
+  const tileY = lat2tile(latLng.lat, zoom);
+
+  return new Point(
+    (tileX - tileCenterX) * 256.0 + width / 2,
+    (tileY - tileCenterY) * 256.0 + height / 2
+  );
+};
 
 export interface Props {
   width: number;
@@ -66,31 +89,8 @@ function Map(props: Props) {
     }
   }
 
-  const pixelToLatLng = (pixel: Point) => {
-    const pointDiffX = (pixel.x - width / 2) / 256.0;
-    const pointDiffY = (pixel.y - height / 2) / 256.0;
-
-    const tileX = lng2tile(center.lng, zoom) + pointDiffX;
-    const tileY = lat2tile(center.lat, zoom) + pointDiffY;
-
-    return new LatLng(
-      Math.max(absMinLatLng.lat, Math.min(absMaxLatLng.lat, tile2lat(tileY, zoom))),
-      Math.max(absMinLatLng.lng, Math.min(absMaxLatLng.lng, tile2lng(tileX, zoom)))
-    );
-  };
-
-  const latLngToPixel = (latLng: LatLng) => {
-    const tileCenterX = lng2tile(center.lng, zoom);
-    const tileCenterY = lat2tile(center.lat, zoom);
-
-    const tileX = lng2tile(latLng.lng, zoom);
-    const tileY = lat2tile(latLng.lat, zoom);
-
-    return new Point(
-      (tileX - tileCenterX) * 256.0 + width / 2,
-      (tileY - tileCenterY) * 256.0 + height / 2
-    );
-  }
+  const boundPixelToLatLng = (pixel: Point) => pixelToLatLng(width, height, zoom, center, pixel);
+  const boundLatLngToPixel = (latLng: LatLng) => latLngToPixel(width, height, zoom, center, latLng);
 
   const handleWheel = (e: React.WheelEvent) => {
     if (!props.onChangeCenterZoom) {
@@ -100,7 +100,7 @@ function Map(props: Props) {
     if (e.deltaY > 0) {
       props.onChangeCenterZoom(center, zoom - 1);
     } else {
-      const mousePos = pixelToLatLng(getMousePoint(containerRef.current!, e));
+      const mousePos = boundPixelToLatLng(getMousePoint(containerRef.current!, e));
       const nextCenter = new LatLng(
         (center.lat + mousePos.lat) / 2,
         (center.lng + mousePos.lng) / 2
@@ -110,7 +110,11 @@ function Map(props: Props) {
   };
 
   return (
-    <MapProvider value={{ width, height, center, zoom }}>
+    <MapProvider value={{
+      width, height, center, zoom,
+      latLngToPixel: boundLatLngToPixel,
+      pixelToLatLng: boundPixelToLatLng,
+    }}>
       <div
         style={{ width, height, position: 'relative', margin: '0 auto', overflow: 'hidden' }}
         ref={containerRef}
@@ -121,7 +125,6 @@ function Map(props: Props) {
         onMouseMove={handleMouseMove}
       >
         {props.children}
-        <GeoJson latLngToPixel={latLngToPixel} data={data as GeoJSON.GeoJSON} />
       </div>
     </MapProvider>
   );

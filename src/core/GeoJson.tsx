@@ -1,6 +1,7 @@
 import React from 'react';
 import { GeoJSON, LineString } from 'geojson';
 import { Point, LatLng } from './models';
+import { useMapContext } from './Context';
 
 function makeSvgPath(points: Point[]) {
   return points
@@ -10,7 +11,6 @@ function makeSvgPath(points: Point[]) {
 
 interface Props {
   data: GeoJSON;
-  latLngToPixel: (latLng: LatLng) => Point;
 }
 
 function findLines(data: GeoJSON) {
@@ -30,7 +30,9 @@ function findLines(data: GeoJSON) {
 }
 
 function GeoJson(props: Props) {
-  const { data, latLngToPixel } = props;
+  const { data } = props;
+
+  const { latLngToPixel } = useMapContext();
 
   const linesStrings = findLines(data);
 
