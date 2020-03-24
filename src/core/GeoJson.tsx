@@ -2,6 +2,7 @@ import React from 'react';
 import { GeoJSON, LineString } from 'geojson';
 import { Point, LatLng } from './models';
 import { useMapContext } from './Context';
+import Layer from './Layer';
 
 function makeSvgPath(points: Point[]) {
   return points
@@ -42,13 +43,13 @@ function GeoJson(props: Props) {
   ));
 
   return (
-    <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
+    <Layer>
       <svg style={{ width: '100%', height: '100%' }}>
         {paths.map((p, idx) => (
-          <path key={idx} fill="none" stroke="#555555" strokeWidth={2} d={p}/>
+          <path key={idx} fill="none" stroke="#555555" strokeWidth={2} d={p} />
         ))}
       </svg>
-    </div>
+    </Layer>
   );
 }
 
