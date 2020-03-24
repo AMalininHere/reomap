@@ -34,6 +34,7 @@ type TileProvider = (x: number, y: number, z: number) => string;
 
 interface Props {
   provider: TileProvider;
+  tileClassName?: string;
 }
 
 function Tiles(props: Props) {
@@ -60,7 +61,7 @@ function Tiles(props: Props) {
   const xMax = Math.min(tileMaxX, Math.pow(2, zoom) - 1);
   const yMax = Math.min(tileMaxY, Math.pow(2, zoom) - 1);
 
-  const { provider } = props;
+  const { provider, tileClassName } = props;
   const tiles: React.ReactNode[] = [];
 
   for (let x = xMin; x <= xMax; ++x) {
@@ -70,6 +71,7 @@ function Tiles(props: Props) {
           key={`${x}-${y}-${zoom}`}
           src={provider(x, y, zoom)}
           loading="lazy"
+          className={tileClassName}
           style={{
             position: 'absolute',
             width: TILE_SIZE,
