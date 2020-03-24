@@ -67,14 +67,11 @@ function Map(props: Props) {
   }
 
   const pixelToLatLng = (pixel: Point) => {
+    const pointDiffX = (pixel.x - width / 2) / 256.0;
+    const pointDiffY = (pixel.y - height / 2) / 256.0;
 
-    const pointDiff = [
-      (pixel.x - width / 2) / 256.0,
-      (pixel.y - height / 2) / 256.0
-    ];
-
-    const tileX = lng2tile(center.lng, zoom) + pointDiff[0];
-    const tileY = lat2tile(center.lat, zoom) + pointDiff[1];
+    const tileX = lng2tile(center.lng, zoom) + pointDiffX;
+    const tileY = lat2tile(center.lat, zoom) + pointDiffY;
 
     return new LatLng(
       Math.max(absMinLatLng.lat, Math.min(absMaxLatLng.lat, tile2lat(tileY, zoom))),
