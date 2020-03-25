@@ -70,6 +70,10 @@ function Map(props: Props) {
   const moveStartedRef = useRef(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) {
+      return;
+    }
+
     e.preventDefault();
     moveStartedRef.current = true;
   };
