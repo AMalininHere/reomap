@@ -1,7 +1,30 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { Point, LatLng } from './models';
 import { MapProvider } from './Context';
+
+function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms: number) {
+  const activeThrottling = useRef<number>(0);
+
+  useEffect(() => () => {
+    if (activeThrottling.current) {
+      window.clearTimeout(activeThrottling.current);
+    }
+  }, []);
+
+  const resultFn = (...args: Parameters<T>) => {
+    if (activeThrottling.current) {
+      return;
+    }
+    activeThrottling.current = window.setTimeout(() => {
+      activeThrottling.current = 0;
+    }, ms);
+
+    return fn(...args);
+  };
+
+  return resultFn;
+}
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
   const elementRect = domElement.getBoundingClientRect();
@@ -58,16 +81,20 @@ export interface Props {
   children: React.ReactNode | React.ReactNode[]
 }
 
+function noop() {}
+
 function Map(props: Props) {
   const {
     width,
     height,
     zoom,
     center,
+    onChangeCenterZoom = noop
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const moveStartedRef = useRef(false);
+  const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) {
@@ -97,19 +124,15 @@ function Map(props: Props) {
   const boundLatLngToPixel = (latLng: LatLng) => latLngToPixel(width, height, zoom, center, latLng);
 
   const handleWheel = (e: React.WheelEvent) => {
-    if (!props.onChangeCenterZoom) {
-      return;
-    }
-
     if (e.deltaY > 0) {
-      props.onChangeCenterZoom(center, zoom - 1);
+      throttledOnChangeCenterZoom(center, zoom - 1);
     } else {
       const mousePos = boundPixelToLatLng(getMousePoint(containerRef.current!, e));
       const nextCenter = new LatLng(
         (center.lat + mousePos.lat) / 2,
         (center.lng + mousePos.lng) / 2
       )
-      props.onChangeCenterZoom(nextCenter, zoom + 1);
+      throttledOnChangeCenterZoom(nextCenter, zoom + 1);
     }
   };
 
