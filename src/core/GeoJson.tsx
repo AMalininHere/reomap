@@ -33,7 +33,7 @@ interface Props {
 function GeoJson(props: Props) {
   const { data } = props;
 
-  const { latLngToPixel } = useMapContext();
+  const { latLngToPixel, width, height } = useMapContext();
 
   const linesStrings = findLines(data);
 
@@ -44,7 +44,7 @@ function GeoJson(props: Props) {
 
   return (
     <Layer>
-      <svg style={{ width: '100%', height: '100%' }}>
+      <svg style={{ width, height }}>
         {paths.map((p, idx) => (
           <path key={idx} fill="none" stroke="#555555" strokeWidth={2} d={p} />
         ))}
