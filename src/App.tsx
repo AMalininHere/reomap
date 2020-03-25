@@ -28,8 +28,8 @@ function App() {
         zoom={zoom}
         center={center}
         onChangeCenterZoom={(c, z) => {
-          setCenter(c);
           if (z > 4 && z < 16) {
+            setCenter(c);
             setZoom(z);
           }
         }}
