@@ -1,30 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { Point, LatLng } from './models';
 import { MapProvider } from './Context';
-
-function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms: number) {
-  const activeThrottling = useRef<number>(0);
-
-  useEffect(() => () => {
-    if (activeThrottling.current) {
-      window.clearTimeout(activeThrottling.current);
-    }
-  }, []);
-
-  const resultFn = (...args: Parameters<T>) => {
-    if (activeThrottling.current) {
-      return;
-    }
-    activeThrottling.current = window.setTimeout(() => {
-      activeThrottling.current = 0;
-    }, ms);
-
-    return fn(...args);
-  };
-
-  return resultFn;
-}
+import { useThrottleCallback } from './utils/hooks';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
   const elementRect = domElement.getBoundingClientRect();
