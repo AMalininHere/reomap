@@ -22,9 +22,9 @@ const absMaxLatLng = new LatLng(
   tile2lng(Math.pow(2, 10), 10)
 );
 
-const pixelToLatLng = (width: number, height: number, zoom: number, center: LatLng, pixel: Point) => {
-  const pointDiffX = (pixel.x - width / 2) / 256.0;
-  const pointDiffY = (pixel.y - height / 2) / 256.0;
+const pixelToLatLng = (width: number, height: number, zoom: number, center: LatLng, source: Point) => {
+  const pointDiffX = (source.x - width / 2) / 256.0;
+  const pointDiffY = (source.y - height / 2) / 256.0;
 
   const tileX = lng2tile(center.lng, zoom) + pointDiffX;
   const tileY = lat2tile(center.lat, zoom) + pointDiffY;
@@ -35,12 +35,12 @@ const pixelToLatLng = (width: number, height: number, zoom: number, center: LatL
   );
 }
 
-const latLngToPixel = (width: number, height: number, zoom: number, center: LatLng, latLng: LatLng) => {
+const latLngToPixel = (width: number, height: number, zoom: number, center: LatLng, source: LatLng) => {
   const tileCenterX = lng2tile(center.lng, zoom);
   const tileCenterY = lat2tile(center.lat, zoom);
 
-  const tileX = lng2tile(latLng.lng, zoom);
-  const tileY = lat2tile(latLng.lat, zoom);
+  const tileX = lng2tile(source.lng, zoom);
+  const tileY = lat2tile(source.lat, zoom);
 
   return new Point(
     (tileX - tileCenterX) * 256.0 + width / 2,
