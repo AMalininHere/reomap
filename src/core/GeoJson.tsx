@@ -1,5 +1,5 @@
 import React from 'react';
-import { GeoJSON, LineString } from 'geojson';
+import * as G from 'geojson';
 import { Point, LatLng } from './models';
 import { useMapContext } from './Context';
 import Layer from './Layer';
@@ -10,24 +10,38 @@ function makeSvgPath(points: Point[]) {
     .join(' ');
 }
 
-function findLines(data: GeoJSON) {
-  const lines: LineString[] = [];
+interface Elements {
+  lines: G.LineString[];
+  points: G.Point[];
+}
+
+function findElements(data: G.GeoJSON) {
+  const result: Elements = {
+    lines: [],
+    points: []
+  };
 
   if (data.type === 'LineString') {
-    lines.push(data);
-  } else if (data.type === 'Feature' && data.geometry.type === 'LineString') {
-    lines.push(data.geometry);
+    result.lines.push(data);
+  } else if (data.type === 'Point') {
+    result.points.push(data);
+  } else if (data.type === 'Feature' ) {
+    const childResult = findElements(data.geometry);
+    result.lines.push(...childResult.lines);
+    result.points.push(...childResult.points);
   } else if (data.type === 'FeatureCollection') {
     for (const g of data.features) {
-      lines.push(...findLines(g));
+      const childResult = findElements(g);
+      result.lines.push(...childResult.lines);
+      result.points.push(...childResult.points);
     }
   }
 
-  return lines;
+  return result;
 }
 
 interface Props {
-  data: GeoJSON;
+  data: G.GeoJSON;
 }
 
 function GeoJson(props: Props) {
@@ -35,9 +49,9 @@ function GeoJson(props: Props) {
 
   const { latLngToPixel, width, height } = useMapContext();
 
-  const linesStrings = findLines(data);
+  const { lines, points } = findElements(data);
 
-  const paths = linesStrings.map(ls => makeSvgPath(ls.coordinates
+  const paths = lines.map(ls => makeSvgPath(ls.coordinates
     .map(([lng, lat]) => new LatLng(lat, lng))
     .map(latLngToPixel)
   ));
@@ -48,6 +62,12 @@ function GeoJson(props: Props) {
         {paths.map((p, idx) => (
           <path key={idx} fill="none" stroke="#555555" strokeWidth={2} d={p} />
         ))}
+        {points
+          .map(p => new LatLng(p.coordinates[1], p.coordinates[0]))
+          .map(latLngToPixel)
+          .map(point => (
+            <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
+          ))}
       </svg>
     </Layer>
   );

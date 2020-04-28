@@ -38,10 +38,6 @@ function App() {
       >
         <Tiles provider={wikimedia} />
         <GeoJson data={data as GeoJSON.GeoJSON} />
-        <Layer>
-          <Marker pos={new LatLng(55.02802211299252, 82.935791015625)} />
-          <Marker pos={new LatLng(53.72271667491848, 87.154541015625)} />
-        </Layer>
       </Map>
       <div>
         <span>zoom: {zoom}</span>
