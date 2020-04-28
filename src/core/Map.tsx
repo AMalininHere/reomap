@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { Point, LatLng } from './models';
 import { MapProvider } from './Context';
@@ -74,19 +74,19 @@ function Map(props: Props) {
   const moveStartedRef = useRef(false);
   const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) {
       return;
     }
 
     e.preventDefault();
     moveStartedRef.current = true;
-  };
+  }, []);
 
-  const handleMouseUp = (e: React.MouseEvent) => {
+  const handleMouseUp = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     moveStartedRef.current = false;
-  };
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     e.preventDefault();
