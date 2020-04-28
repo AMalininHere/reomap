@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import * as G from 'geojson';
 import { Point, LatLng } from './models';
 import { useMapContext } from './Context';
@@ -44,30 +44,42 @@ interface Props {
   data: G.GeoJSON;
 }
 
+function SvgLine(props: { line: G.LineString, latLngToPixel: (ll: LatLng) => Point }) {
+  const { line: { coordinates }, latLngToPixel } = props;
+  const points = coordinates
+    .map(([lng, lat]) => new LatLng(lat, lng))
+    .map(latLngToPixel);
+
+  const pathString = makeSvgPath(points);
+
+  return (
+    <path fill="none" stroke="#555555" strokeWidth={2} d={pathString} />
+  );
+}
+
+function SvgPoint(props: { point: G.Point, latLngToPixel: (ll: LatLng) => Point }) {
+  const { point: { coordinates }, latLngToPixel } = props;
+  const point = latLngToPixel(new LatLng(coordinates[1], coordinates[0]));
+
+  return (
+    <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
+  );
+}
+
 function GeoJson(props: Props) {
   const { data } = props;
-
   const { latLngToPixel, width, height } = useMapContext();
-
-  const { lines, points } = findElements(data);
-
-  const paths = lines.map(ls => makeSvgPath(ls.coordinates
-    .map(([lng, lat]) => new LatLng(lat, lng))
-    .map(latLngToPixel)
-  ));
+  const { lines, points } = useMemo(() => findElements(data), [data]);
 
   return (
     <Layer>
       <svg style={{ width, height }}>
-        {paths.map((p, idx) => (
-          <path key={idx} fill="none" stroke="#555555" strokeWidth={2} d={p} />
+        {lines.map((l, idx) => (
+          <SvgLine key={idx} line={l} latLngToPixel={latLngToPixel} />
         ))}
-        {points
-          .map(p => new LatLng(p.coordinates[1], p.coordinates[0]))
-          .map(latLngToPixel)
-          .map(point => (
-            <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
-          ))}
+        {points.map((p, idx) => (
+          <SvgPoint key={idx} point={p} latLngToPixel={latLngToPixel} />
+        ))}
       </svg>
     </Layer>
   );
