@@ -40,12 +40,13 @@ function findElements(data: G.GeoJSON) {
   return result;
 }
 
-interface Props {
-  data: G.GeoJSON;
+interface ElementProps<T extends G.GeoJsonObject> {
+  geoElement: T;
+  latLngToPixel: (ll: LatLng) => Point
 }
 
-function SvgLine(props: { line: G.LineString, latLngToPixel: (ll: LatLng) => Point }) {
-  const { line: { coordinates }, latLngToPixel } = props;
+function SvgLine(props: ElementProps<G.LineString>) {
+  const { geoElement: { coordinates }, latLngToPixel } = props;
   const points = coordinates
     .map(([lng, lat]) => new LatLng(lat, lng))
     .map(latLngToPixel);
@@ -57,13 +58,17 @@ function SvgLine(props: { line: G.LineString, latLngToPixel: (ll: LatLng) => Poi
   );
 }
 
-function SvgPoint(props: { point: G.Point, latLngToPixel: (ll: LatLng) => Point }) {
-  const { point: { coordinates }, latLngToPixel } = props;
+function SvgPoint(props: ElementProps<G.Point>) {
+  const { geoElement: { coordinates }, latLngToPixel } = props;
   const point = latLngToPixel(new LatLng(coordinates[1], coordinates[0]));
 
   return (
     <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
   );
+}
+
+interface Props {
+  data: G.GeoJSON;
 }
 
 function GeoJson(props: Props) {
@@ -75,10 +80,10 @@ function GeoJson(props: Props) {
     <Layer>
       <svg style={{ width, height }}>
         {lines.map((l, idx) => (
-          <SvgLine key={idx} line={l} latLngToPixel={latLngToPixel} />
+          <SvgLine key={idx} geoElement={l} latLngToPixel={latLngToPixel} />
         ))}
         {points.map((p, idx) => (
-          <SvgPoint key={idx} point={p} latLngToPixel={latLngToPixel} />
+          <SvgPoint key={idx} geoElement={p} latLngToPixel={latLngToPixel} />
         ))}
       </svg>
     </Layer>
