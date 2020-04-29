@@ -17,7 +17,7 @@ interface ElementProps<T extends G.GeoJsonObject> {
   latLngToPixel: (ll: LatLng) => Point;
 }
 
-function SvgLine(props: ElementProps<G.LineString>) {
+const SvgLine = React.memo<ElementProps<G.LineString>>(props => {
   const { geoElement: { coordinates }, latLngToPixel } = props;
   const points = coordinates
     .map(([lng, lat]) => new LatLng(lat, lng))
@@ -35,9 +35,9 @@ function SvgLine(props: ElementProps<G.LineString>) {
   return (
     <path fill="none" stroke="#555555" strokeWidth={2} d={pathString} />
   );
-}
+});
 
-function SvgPoint(props: ElementProps<G.Point>) {
+const SvgPoint = React.memo<ElementProps<G.Point>>(props => {
   const { geoElement: { coordinates }, latLngToPixel } = props;
   const point = latLngToPixel(new LatLng(coordinates[1], coordinates[0]));
 
@@ -51,7 +51,7 @@ function SvgPoint(props: ElementProps<G.Point>) {
   return (
     <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
   );
-}
+})
 
 interface Elements {
   lines: G.LineString[];
