@@ -10,36 +10,6 @@ function makeSvgPath(points: Point[]) {
     .join(' ');
 }
 
-interface Elements {
-  lines: G.LineString[];
-  points: G.Point[];
-}
-
-function findElements(data: G.GeoJSON) {
-  const result: Elements = {
-    lines: [],
-    points: []
-  };
-
-  if (data.type === 'LineString') {
-    result.lines.push(data);
-  } else if (data.type === 'Point') {
-    result.points.push(data);
-  } else if (data.type === 'Feature' ) {
-    const childResult = findElements(data.geometry);
-    result.lines.push(...childResult.lines);
-    result.points.push(...childResult.points);
-  } else if (data.type === 'FeatureCollection') {
-    for (const g of data.features) {
-      const childResult = findElements(g);
-      result.lines.push(...childResult.lines);
-      result.points.push(...childResult.points);
-    }
-  }
-
-  return result;
-}
-
 interface ElementProps<T extends G.GeoJsonObject> {
   geoElement: T;
   width: number;
@@ -81,6 +51,36 @@ function SvgPoint(props: ElementProps<G.Point>) {
   return (
     <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
   );
+}
+
+interface Elements {
+  lines: G.LineString[];
+  points: G.Point[];
+}
+
+function findElements(data: G.GeoJSON) {
+  const result: Elements = {
+    lines: [],
+    points: []
+  };
+
+  if (data.type === 'LineString') {
+    result.lines.push(data);
+  } else if (data.type === 'Point') {
+    result.points.push(data);
+  } else if (data.type === 'Feature' ) {
+    const childResult = findElements(data.geometry);
+    result.lines.push(...childResult.lines);
+    result.points.push(...childResult.points);
+  } else if (data.type === 'FeatureCollection') {
+    for (const g of data.features) {
+      const childResult = findElements(g);
+      result.lines.push(...childResult.lines);
+      result.points.push(...childResult.points);
+    }
+  }
+
+  return result;
 }
 
 interface Props {
