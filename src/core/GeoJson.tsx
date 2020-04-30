@@ -1,8 +1,23 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as G from 'geojson';
 import { Point, LatLng } from './models';
 import { useMapContext } from './Context';
 import Layer from './Layer';
+import { lat2tile, lng2tile } from './utils/geo-fns';
+
+const latLngToPixel = (width: number, height: number, zoom: number, center: LatLng, source: LatLng) => {
+  const tileCenterX = lng2tile(center.lng, zoom);
+  const tileCenterY = lat2tile(center.lat, zoom);
+
+  const tileX = lng2tile(source.lng, zoom);
+  const tileY = lat2tile(source.lat, zoom);
+
+  return new Point(
+    (tileX - tileCenterX) * 256.0 + width / 2,
+    (tileY - tileCenterY) * 256.0 + height / 2
+  );
+};
+
 
 function makeSvgPath(points: Point[]) {
   return points
@@ -83,24 +98,56 @@ function findElements(data: G.GeoJSON) {
   return result;
 }
 
+function findContolPoint(points: G.Point[], lines: G.LineString[]) {
+  let minLat = Number.MAX_VALUE;
+  let minLng = Number.MAX_VALUE;
+
+  for (const p of points) {
+    minLat = Math.min(minLat, p.coordinates[1]);
+    minLng = Math.min(minLng, p.coordinates[0]);
+  }
+
+  for (const l of lines) {
+    for (const c of l.coordinates) {
+      minLat = Math.min(minLat, c[1]);
+      minLng = Math.min(minLng, c[0]);
+    }
+  }
+
+  return new LatLng(minLat, minLng);
+}
+
 interface Props {
   data: G.GeoJSON;
 }
 
 function GeoJson(props: Props) {
   const { data } = props;
-  const { latLngToPixel, width, height } = useMapContext();
+  const { width, height, center, zoom } = useMapContext();
   const { lines, points } = useMemo(() => findElements(data), [data]);
+  const controlLatLng = useMemo(() => findContolPoint(points, lines), [ points, lines ]);
+  const boundLatLngToPixel = useCallback(
+    (latLng: LatLng) => latLngToPixel(width, height, zoom, controlLatLng, latLng),
+    [width, height, zoom, controlLatLng]
+  );
+
+  const offsetX = (lng2tile(controlLatLng.lng, zoom) - lng2tile(center.lng, zoom)) * 256;
+  const offsetY = (lat2tile(controlLatLng.lat, zoom) - lat2tile(center.lat, zoom)) * 256;
+
+  console.log(
+    offsetY,
+    offsetX
+  );
 
   return (
     <Layer>
-      <svg style={{ width, height }}>
+      <svg style={{ width, height, willChange: 'transform', transform: `translate(${offsetX}px, ${offsetY}px)` }}>
         {lines.map((l, idx) => (
           <SvgLine key={idx}
             geoElement={l}
             width={width}
             height={height}
-            latLngToPixel={latLngToPixel}
+            latLngToPixel={boundLatLngToPixel}
           />
         ))}
         {points.map((p, idx) => (
@@ -108,7 +155,7 @@ function GeoJson(props: Props) {
             geoElement={p}
             width={width}
             height={height}
-            latLngToPixel={latLngToPixel}
+            latLngToPixel={boundLatLngToPixel}
           />
         ))}
       </svg>
