@@ -134,11 +134,6 @@ function GeoJson(props: Props) {
   const offsetX = (lng2tile(controlLatLng.lng, zoom) - lng2tile(center.lng, zoom)) * 256;
   const offsetY = (lat2tile(controlLatLng.lat, zoom) - lat2tile(center.lat, zoom)) * 256;
 
-  console.log(
-    offsetY,
-    offsetX
-  );
-
   return (
     <Layer>
       <svg style={{ width, height }}>
