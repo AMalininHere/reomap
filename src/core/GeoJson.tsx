@@ -123,7 +123,7 @@ function GeoJson(props: Props) {
   return (
     <Layer>
       <svg width={width} height={height}>
-        <g style={{ willChange: 'transform', transform: `translate(${offsetX}px, ${offsetY}px)` }}>
+        <g transform={`translate(${offsetX}, ${offsetY})`}>
           {lines.map((l, idx) => (
             <SvgLine key={idx}
               geoElement={l}
