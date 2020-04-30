@@ -113,12 +113,12 @@ function GeoJson(props: Props) {
   const { lines, points } = useMemo(() => findElements(data), [data]);
   const controlLatLng = useMemo(() => findContolPoint(points, lines), [ points, lines ]);
   const boundLatLngToPixel = useCallback(
-    (latLng: LatLng) => latLngToPixel(width, height, zoom, controlLatLng, latLng),
-    [width, height, zoom, controlLatLng]
+    (latLng: LatLng) => latLngToPixel(0, 0, zoom, controlLatLng, latLng),
+    [zoom, controlLatLng]
   );
 
-  const offsetX = (lng2tile(controlLatLng.lng, zoom) - lng2tile(center.lng, zoom)) * 256;
-  const offsetY = (lat2tile(controlLatLng.lat, zoom) - lat2tile(center.lat, zoom)) * 256;
+  const offsetX = (lng2tile(controlLatLng.lng, zoom) - lng2tile(center.lng, zoom)) * 256 + width / 2;
+  const offsetY = (lat2tile(controlLatLng.lat, zoom) - lat2tile(center.lat, zoom)) * 256 + height / 2;
 
   return (
     <Layer>
