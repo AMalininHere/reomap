@@ -38,12 +38,12 @@ const SvgLine = React.memo<ElementProps<G.LineString>>(props => {
     .map(([lng, lat]) => new LatLng(lat, lng))
     .map(latLngToPixel);
 
-  if (points.reduce((acc, point) => acc && (
-    (point.x < 0 || point.x > props.width) ||
-    (point.y < 0 || point.y > props.height)
-  ), true)) {
-    return null;
-  }
+  // if (points.reduce((acc, point) => acc && (
+  //   (point.x < 0 || point.x > props.width) ||
+  //   (point.y < 0 || point.y > props.height)
+  // ), true)) {
+  //   return null;
+  // }
 
   const pathString = makeSvgPath(points);
 
@@ -56,12 +56,12 @@ const SvgPoint = React.memo<ElementProps<G.Point>>(props => {
   const { geoElement: { coordinates }, latLngToPixel } = props;
   const point = latLngToPixel(new LatLng(coordinates[1], coordinates[0]));
 
-  if (
-    (point.x < 0 || point.x > props.width) ||
-    (point.y < 0 || point.y > props.height)
-  ) {
-    return null;
-  }
+  // if (
+  //   (point.x < 0 || point.x > props.width) ||
+  //   (point.y < 0 || point.y > props.height)
+  // ) {
+  //   return null;
+  // }
 
   return (
     <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
@@ -141,7 +141,8 @@ function GeoJson(props: Props) {
 
   return (
     <Layer>
-      <svg style={{ width, height, willChange: 'transform', transform: `translate(${offsetX}px, ${offsetY}px)` }}>
+      <svg style={{ width, height }}>
+        <g style={{ willChange: 'transform', transform: `translate(${offsetX}px, ${offsetY}px)` }}>
         {lines.map((l, idx) => (
           <SvgLine key={idx}
             geoElement={l}
@@ -158,6 +159,7 @@ function GeoJson(props: Props) {
             latLngToPixel={boundLatLngToPixel}
           />
         ))}
+        </g>
       </svg>
     </Layer>
   );
