@@ -138,22 +138,22 @@ function GeoJson(props: Props) {
     <Layer>
       <svg style={{ width, height }}>
         <g style={{ willChange: 'transform', transform: `translate(${offsetX}px, ${offsetY}px)` }}>
-        {lines.map((l, idx) => (
-          <SvgLine key={idx}
-            geoElement={l}
-            width={width}
-            height={height}
-            latLngToPixel={boundLatLngToPixel}
-          />
-        ))}
-        {points.map((p, idx) => (
-          <SvgPoint key={idx}
-            geoElement={p}
-            width={width}
-            height={height}
-            latLngToPixel={boundLatLngToPixel}
-          />
-        ))}
+          {lines.map((l, idx) => (
+            <SvgLine key={idx}
+              geoElement={l}
+              width={width}
+              height={height}
+              latLngToPixel={boundLatLngToPixel}
+            />
+          ))}
+          {points.map((p, idx) => (
+            <SvgPoint key={idx}
+              geoElement={p}
+              width={width}
+              height={height}
+              latLngToPixel={boundLatLngToPixel}
+            />
+          ))}
         </g>
       </svg>
     </Layer>
