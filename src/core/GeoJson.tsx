@@ -85,22 +85,22 @@ function findElements(data: G.GeoJSON) {
 }
 
 function findContolPoint(points: G.Point[], lines: G.LineString[]) {
-  let minLat = Number.MAX_VALUE;
+  let maxLat = Number.MIN_VALUE;
   let minLng = Number.MAX_VALUE;
 
   for (const p of points) {
-    minLat = Math.min(minLat, p.coordinates[1]);
+    maxLat = Math.max(maxLat, p.coordinates[1]);
     minLng = Math.min(minLng, p.coordinates[0]);
   }
 
   for (const l of lines) {
     for (const c of l.coordinates) {
-      minLat = Math.min(minLat, c[1]);
+      maxLat = Math.max(maxLat, c[1]);
       minLng = Math.min(minLng, c[0]);
     }
   }
 
-  return new LatLng(minLat, minLng);
+  return new LatLng(maxLat, minLng);
 }
 
 interface Props {
