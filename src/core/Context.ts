@@ -1,14 +1,16 @@
 import React, { useContext } from 'react';
 import { LatLng } from './models';
 
-interface MapContextType {
-  width: number;
-  height: number;
-  center: LatLng;
-  zoom: number;
+export class ContextData {
+  constructor(
+    public readonly center: LatLng,
+    public readonly zoom: number,
+    public readonly width: number,
+    public readonly height: number,
+  ) { }
 }
 
-const ctx = React.createContext<MapContextType>(null!);
+const ctx = React.createContext<ContextData>(null!);
 
 export const MapProvider = ctx.Provider;
 

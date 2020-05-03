@@ -2,7 +2,7 @@ import React, { useRef, useCallback } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { pixelToLatLng } from './common';
 import { Point, LatLng } from './models';
-import { MapProvider } from './Context';
+import { MapProvider, ContextData } from './Context';
 import { useThrottleCallback } from './utils/hooks';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
@@ -78,9 +78,7 @@ function Map(props: Props) {
   };
 
   return (
-    <MapProvider value={{
-      width, height, center, zoom,
-    }}>
+    <MapProvider value={new ContextData(center, zoom, width, height)}>
       <div
         style={{ width, height, position: 'relative', overflow: 'hidden', ...style }}
         ref={containerRef}
