@@ -16,11 +16,11 @@ function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
 export interface Props {
   width: number;
   height: number;
+  style?: React.CSSProperties;
+
   zoom: number;
   center: LatLng;
-
   onChangeCenterZoom?: (center: LatLng, zoom: number) => any;
-
   children: React.ReactNode | React.ReactNode[]
 }
 
@@ -30,9 +30,10 @@ function Map(props: Props) {
   const {
     width,
     height,
+    style,
     zoom,
     center,
-    onChangeCenterZoom = noop
+    onChangeCenterZoom = noop,
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,7 +82,7 @@ function Map(props: Props) {
       width, height, center, zoom,
     }}>
       <div
-        style={{ width, height, position: 'relative', margin: '0 auto', overflow: 'hidden' }}
+        style={{ width, height, position: 'relative', overflow: 'hidden', ...style }}
         ref={containerRef}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}

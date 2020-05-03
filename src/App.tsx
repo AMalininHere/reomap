@@ -25,6 +25,7 @@ function App() {
   return (
     <div>
       <Map
+        style={{ margin: '0 auto' }}
         zoom={zoom}
         center={center}
         onChangeCenterZoom={(c, z) => {
