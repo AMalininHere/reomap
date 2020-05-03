@@ -1,44 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
 import * as G from 'geojson';
-import { Point, LatLng } from './models';
-import { useMapContext } from './Context';
 import Layer from './Layer';
+import Point from './vector/Point';
+import LineString from './vector/LineString';
 import { lat2tile, lng2tile } from './utils/geo-fns';
 import { latLngToPixel } from './common';
-
-
-function makeSvgPath(points: Point[]) {
-  return points
-    .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
-    .join(' ');
-}
-
-interface ElementProps<T extends G.Geometry> {
-  geoElement: T;
-  latLngToPixel: (ll: LatLng) => Point;
-}
-
-const SvgLine = React.memo<ElementProps<G.LineString>>(props => {
-  const { geoElement: { coordinates }, latLngToPixel } = props;
-  const points = coordinates
-    .map(([lng, lat]) => new LatLng(lat, lng))
-    .map(latLngToPixel);
-
-  const pathString = makeSvgPath(points);
-
-  return (
-    <path fill="none" stroke="#555555" strokeWidth={2} d={pathString} />
-  );
-});
-
-const SvgPoint = React.memo<ElementProps<G.Point>>(props => {
-  const { geoElement: { coordinates }, latLngToPixel } = props;
-  const point = latLngToPixel(new LatLng(coordinates[1], coordinates[0]));
-
-  return (
-    <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
-  );
-})
+import { LatLng } from './models';
+import { useMapContext } from './Context';
 
 interface Elements {
   lines: G.LineString[];
@@ -111,13 +79,13 @@ function GeoJson(props: Props) {
       <svg width={width} height={height}>
         <g transform={`translate(${offsetX}, ${offsetY})`}>
           {lines.map((l, idx) => (
-            <SvgLine key={idx}
+            <LineString key={idx}
               geoElement={l}
               latLngToPixel={boundLatLngToPixel}
             />
           ))}
           {points.map((p, idx) => (
-            <SvgPoint key={idx}
+            <Point key={idx}
               geoElement={p}
               latLngToPixel={boundLatLngToPixel}
             />
