@@ -4,19 +4,7 @@ import { Point, LatLng } from './models';
 import { useMapContext } from './Context';
 import Layer from './Layer';
 import { lat2tile, lng2tile } from './utils/geo-fns';
-
-const latLngToPixel = (width: number, height: number, zoom: number, center: LatLng, source: LatLng) => {
-  const tileCenterX = lng2tile(center.lng, zoom);
-  const tileCenterY = lat2tile(center.lat, zoom);
-
-  const tileX = lng2tile(source.lng, zoom);
-  const tileY = lat2tile(source.lat, zoom);
-
-  return new Point(
-    (tileX - tileCenterX) * 256.0 + width / 2,
-    (tileY - tileCenterY) * 256.0 + height / 2
-  );
-};
+import { latLngToPixel } from './common';
 
 
 function makeSvgPath(points: Point[]) {
