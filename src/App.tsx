@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import data from './test.json';
-import { LatLng, Map, Tiles, GeoJson, Layer, Marker } from './core';
+import { LatLng, Map, Tiles, GeoJson } from './core';
 
 function osm(x: number, y: number, z: number) {
   const s = String.fromCharCode(97 + (x + y + z) % 3)
