@@ -38,12 +38,7 @@ interface Props {
 }
 
 function Tiles(props: Props) {
-  const {
-    center,
-    zoom,
-    width,
-    height,
-  } = useMapContext();
+  const mapContext = useMapContext();
 
   const {
     tileCenterX,
@@ -54,12 +49,12 @@ function Tiles(props: Props) {
 
     tileMinY,
     tileMaxY,
-  } = useTileValues(center, width, height, zoom);
+  } = useTileValues(mapContext.center, mapContext.width, mapContext.height, mapContext.zoom);
 
   const xMin = Math.max(tileMinX, 0);
   const yMin = Math.max(tileMinY, 0);
-  const xMax = Math.min(tileMaxX, Math.pow(2, zoom) - 1);
-  const yMax = Math.min(tileMaxY, Math.pow(2, zoom) - 1);
+  const xMax = Math.min(tileMaxX, Math.pow(2, mapContext.zoom) - 1);
+  const yMax = Math.min(tileMaxY, Math.pow(2, mapContext.zoom) - 1);
 
   const { provider, tileClassName } = props;
   const tiles: React.ReactNode[] = [];
@@ -68,8 +63,8 @@ function Tiles(props: Props) {
     for (let y = yMin; y <= yMax; ++y) {
       tiles.push(
         <img
-          key={`${x}-${y}-${zoom}`}
-          src={provider(x, y, zoom)}
+          key={`${x}-${y}-${mapContext.zoom}`}
+          src={provider(x, y, mapContext.zoom)}
           loading="lazy"
           className={tileClassName}
           style={{
@@ -84,8 +79,8 @@ function Tiles(props: Props) {
     }
   }
 
-  const left = -((tileCenterX - tileMinX) * TILE_SIZE - width / 2);
-  const top = -((tileCenterY - tileMinY) * TILE_SIZE - height / 2);
+  const left = -((tileCenterX - tileMinX) * TILE_SIZE - mapContext.width / 2);
+  const top = -((tileCenterY - tileMinY) * TILE_SIZE - mapContext.height / 2);
 
   const tilesStyle: React.CSSProperties = {
     position: 'absolute',

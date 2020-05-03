@@ -6,7 +6,7 @@ import LineString from './vector/LineString';
 import { lat2tile, lng2tile } from './utils/geo-fns';
 import { latLngToPixel } from './common';
 import { LatLng } from './models';
-import { useMapContext } from './Context';
+import { useMapContext, ContextData } from './Context';
 
 interface Elements {
   lines: G.LineString[];
@@ -61,22 +61,28 @@ interface Props {
   data: G.GeoJSON;
 }
 
+function useGeoOffsets(ctx: ContextData, controlLatLng: LatLng) {
+  const offsetX = (lng2tile(controlLatLng.lng, ctx.zoom) - lng2tile(ctx.center.lng, ctx.zoom)) * 256 + ctx.width / 2;
+  const offsetY = (lat2tile(controlLatLng.lat, ctx.zoom) - lat2tile(ctx.center.lat, ctx.zoom)) * 256 + ctx.height / 2;
+
+  return { offsetX, offsetY };
+}
+
 function GeoJson(props: Props) {
-  const { data } = props;
-  const { width, height, center, zoom } = useMapContext();
+  const { data } = props; 
+  const mapContext = useMapContext();
   const { lines, points } = useMemo(() => findElements(data), [data]);
   const controlLatLng = useMemo(() => findContolPoint(points, lines), [ points, lines ]);
   const boundLatLngToPixel = useCallback(
-    (latLng: LatLng) => latLngToPixel(0, 0, zoom, controlLatLng, latLng),
-    [zoom, controlLatLng]
+    (latLng: LatLng) => latLngToPixel(0, 0, mapContext.zoom, controlLatLng, latLng),
+    [mapContext.zoom, controlLatLng]
   );
 
-  const offsetX = (lng2tile(controlLatLng.lng, zoom) - lng2tile(center.lng, zoom)) * 256 + width / 2;
-  const offsetY = (lat2tile(controlLatLng.lat, zoom) - lat2tile(center.lat, zoom)) * 256 + height / 2;
+  const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
 
   return (
     <Layer>
-      <svg width={width} height={height}>
+      <svg width={mapContext.width} height={mapContext.height}>
         <g transform={`translate(${offsetX}, ${offsetY})`}>
           {lines.map((l, idx) => (
             <LineString key={idx}
