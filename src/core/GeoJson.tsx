@@ -13,10 +13,8 @@ function makeSvgPath(points: Point[]) {
     .join(' ');
 }
 
-interface ElementProps<T extends G.GeoJsonObject> {
+interface ElementProps<T extends G.Geometry> {
   geoElement: T;
-  width: number;
-  height: number;
   latLngToPixel: (ll: LatLng) => Point;
 }
 
@@ -115,16 +113,12 @@ function GeoJson(props: Props) {
           {lines.map((l, idx) => (
             <SvgLine key={idx}
               geoElement={l}
-              width={width}
-              height={height}
               latLngToPixel={boundLatLngToPixel}
             />
           ))}
           {points.map((p, idx) => (
             <SvgPoint key={idx}
               geoElement={p}
-              width={width}
-              height={height}
               latLngToPixel={boundLatLngToPixel}
             />
           ))}
