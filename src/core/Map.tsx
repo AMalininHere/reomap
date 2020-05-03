@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
-import { pixelToLatLng, latLngToPixel } from './common';
+import { pixelToLatLng } from './common';
 import { Point, LatLng } from './models';
 import { MapProvider } from './Context';
 import { useThrottleCallback } from './utils/hooks';
@@ -63,14 +63,11 @@ function Map(props: Props) {
     }
   }
 
-  const boundPixelToLatLng = (pixel: Point) => pixelToLatLng(width, height, zoom, center, pixel);
-  const boundLatLngToPixel = (latLng: LatLng) => latLngToPixel(width, height, zoom, center, latLng);
-
   const handleWheel = (e: React.WheelEvent) => {
     if (e.deltaY > 0) {
       throttledOnChangeCenterZoom(center, zoom - 1);
     } else {
-      const mousePos = boundPixelToLatLng(getMousePoint(containerRef.current!, e));
+      const mousePos = pixelToLatLng(width, height, zoom, center, getMousePoint(containerRef.current!, e));
       const nextCenter = new LatLng(
         (center.lat + mousePos.lat) / 2,
         (center.lng + mousePos.lng) / 2
@@ -82,8 +79,6 @@ function Map(props: Props) {
   return (
     <MapProvider value={{
       width, height, center, zoom,
-      latLngToPixel: boundLatLngToPixel,
-      pixelToLatLng: boundPixelToLatLng,
     }}>
       <div
         style={{ width, height, position: 'relative', margin: '0 auto', overflow: 'hidden' }}
