@@ -23,10 +23,12 @@ export function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms
   return resultFn;
 }
 
+export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 export function useSyncRef<T>(data: T) {
   const ref = useRef(data);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     ref.current = data;
   }, [data]);
 
