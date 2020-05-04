@@ -3,7 +3,7 @@ import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { pixelToLatLng } from './common';
 import { Point, LatLng } from './models';
 import { MapProvider, ContextData } from './Context';
-import { useThrottleCallback } from './utils/hooks';
+import { useThrottleCallback, useSyncRef } from './utils/hooks';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
   const elementRect = domElement.getBoundingClientRect();
@@ -69,20 +69,22 @@ function Map(props: Props) {
     moveStartedRef.current = true;
   }, []);
 
-  const handleMouseUp = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    moveStartedRef.current = false;
-  }, []);
+  const mouseUpRef = useSyncRef((e: MouseEvent) => {
+    if (moveStartedRef.current) {
+      e.preventDefault();
+      moveStartedRef.current = false;
+    }
+  });
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const mouseMoveRef = useSyncRef((e: MouseEvent) => {
     if (moveStartedRef.current && props.onChangeCenterZoom) {
+      e.preventDefault();
       const lat = tile2lat(lat2tile(center.lat, zoom) - (e.movementY / 256.0), zoom);
       const lng = tile2lng(lng2tile(center.lng, zoom) - (e.movementX / 256.0), zoom);
       const result = new LatLng(lat, lng);
       props.onChangeCenterZoom(result, zoom);
     }
-  }
+  });
 
   const handleWheel = (e: React.WheelEvent) => {
     if (e.deltaY > 0) {
@@ -97,6 +99,19 @@ function Map(props: Props) {
     }
   };
 
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => mouseMoveRef.current(e);
+    const handleUp = (e: MouseEvent) => mouseUpRef.current(e);
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+    };
+  }, []);
+
   return (
     <MapProvider value={new ContextData(center, zoom, widthHeight.x, widthHeight.y)}>
       <div
@@ -104,9 +119,6 @@ function Map(props: Props) {
         ref={containerRef}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
-        onMouseLeave={handleMouseUp}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
       >
         {props.children}
       </div>
