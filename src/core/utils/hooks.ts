@@ -18,7 +18,7 @@ export function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms
     }, ms);
 
     return fn(...args);
-  }, [fn]);
+  }, [fn, ms]);
 
   return resultFn;
 }
