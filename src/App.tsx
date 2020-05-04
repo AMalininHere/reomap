@@ -25,7 +25,7 @@ function App() {
   return (
     <div>
       <Map
-        style={{ margin: '0 auto' }}
+        style={{ margin: '0 auto', width: 800, height: 600 }}
         zoom={zoom}
         center={center}
         onChangeCenterZoom={(c, z) => {
@@ -34,8 +34,6 @@ function App() {
             setZoom(z);
           }
         }}
-        width={800}
-        height={500}
       >
         <Tiles provider={wikimedia} />
         <GeoJson data={data as GeoJSON.GeoJSON} />

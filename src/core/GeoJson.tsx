@@ -69,7 +69,7 @@ function useGeoOffsets(ctx: ContextData, controlLatLng: LatLng) {
 }
 
 function GeoJson(props: Props) {
-  const { data } = props; 
+  const { data } = props;
   const mapContext = useMapContext();
   const { lines, points } = useMemo(() => findElements(data), [data]);
   const controlLatLng = useMemo(() => findContolPoint(points, lines), [ points, lines ]);
@@ -82,22 +82,24 @@ function GeoJson(props: Props) {
 
   return (
     <Layer>
-      <svg width={mapContext.width} height={mapContext.height}>
-        <g transform={`translate(${offsetX}, ${offsetY})`}>
-          {lines.map((l, idx) => (
-            <LineString key={idx}
-              geoElement={l}
-              latLngToPixel={boundLatLngToPixel}
-            />
-          ))}
-          {points.map((p, idx) => (
-            <Point key={idx}
-              geoElement={p}
-              latLngToPixel={boundLatLngToPixel}
-            />
-          ))}
-        </g>
-      </svg>
+      {(mapContext.width > 0 && mapContext.height > 0) && (
+        <svg width={mapContext.width} height={mapContext.height}>
+          <g transform={`translate(${offsetX}, ${offsetY})`}>
+            {lines.map((l, idx) => (
+              <LineString key={idx}
+                geoElement={l}
+                latLngToPixel={boundLatLngToPixel}
+              />
+            ))}
+            {points.map((p, idx) => (
+              <Point key={idx}
+                geoElement={p}
+                latLngToPixel={boundLatLngToPixel}
+              />
+            ))}
+          </g>
+        </svg>
+      )}
     </Layer>
   );
 }

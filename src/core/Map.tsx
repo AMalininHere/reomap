@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { pixelToLatLng } from './common';
 import { Point, LatLng } from './models';
@@ -14,8 +14,6 @@ function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
 }
 
 export interface Props {
-  width: number;
-  height: number;
   style?: React.CSSProperties;
 
   zoom: number;
@@ -28,8 +26,6 @@ function noop() {}
 
 function Map(props: Props) {
   const {
-    width,
-    height,
     style,
     zoom,
     center,
@@ -37,6 +33,30 @@ function Map(props: Props) {
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const [ widthHeight, setWidthHeight ] = useState(new Point(0, 0));
+
+  useEffect(() => {
+    const updateSize = () => {
+      const rect = containerRef.current!.getBoundingClientRect();
+      setWidthHeight(p => {
+        if (p.x === rect.width && p.y === rect.height) {
+          return p;
+        }
+        return new Point(rect.width, rect.height);
+      });
+    };
+
+    updateSize();
+
+    window.addEventListener('resize', updateSize);
+
+    return () => {
+      window.removeEventListener('resize', updateSize);
+    };
+
+  }, []);
+
+
   const moveStartedRef = useRef(false);
   const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
 
@@ -68,7 +88,7 @@ function Map(props: Props) {
     if (e.deltaY > 0) {
       throttledOnChangeCenterZoom(center, zoom - 1);
     } else {
-      const mousePos = pixelToLatLng(width, height, zoom, center, getMousePoint(containerRef.current!, e));
+      const mousePos = pixelToLatLng(widthHeight.x, widthHeight.y, zoom, center, getMousePoint(containerRef.current!, e));
       const nextCenter = new LatLng(
         (center.lat + mousePos.lat) / 2,
         (center.lng + mousePos.lng) / 2
@@ -78,9 +98,9 @@ function Map(props: Props) {
   };
 
   return (
-    <MapProvider value={new ContextData(center, zoom, width, height)}>
+    <MapProvider value={new ContextData(center, zoom, widthHeight.x, widthHeight.y)}>
       <div
-        style={{ width, height, position: 'relative', overflow: 'hidden', ...style }}
+        style={{ position: 'relative', overflow: 'hidden', ...style }}
         ref={containerRef}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
