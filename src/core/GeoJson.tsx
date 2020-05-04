@@ -8,6 +8,13 @@ import { latLngToPixel } from './common';
 import { LatLng } from './models';
 import { useMapContext, ContextData } from './Context';
 
+function useLatLngToPixel(width: number, height: number, zoom: number, center: LatLng) {
+  return useCallback(
+    (latLng: LatLng) => latLngToPixel(width, height, zoom, center, latLng),
+    [width, height, zoom, center]
+  );
+}
+
 interface Elements {
   lines: G.LineString[];
   points: G.Point[];
@@ -73,30 +80,31 @@ function GeoJson(props: Props) {
   const mapContext = useMapContext();
   const { lines, points } = useMemo(() => findElements(data), [data]);
   const controlLatLng = useMemo(() => findContolPoint(points, lines), [ points, lines ]);
-  const boundLatLngToPixel = useCallback(
-    (latLng: LatLng) => latLngToPixel(0, 0, mapContext.zoom, controlLatLng, latLng),
-    [mapContext.zoom, controlLatLng]
-  );
+  const boundLatLngToPixel = useLatLngToPixel(0, 0, mapContext.zoom, controlLatLng);
 
   const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
+
+  const svgItems = useMemo(() => ([
+    ...lines.map((l, idx) => (
+      <LineString key={idx}
+        geoElement={l}
+        latLngToPixel={boundLatLngToPixel}
+      />
+    )),
+    ...points.map((p, idx) => (
+      <Point key={idx}
+        geoElement={p}
+        latLngToPixel={boundLatLngToPixel}
+      />
+    ))
+  ]), [lines, points, boundLatLngToPixel])
 
   return (
     <Layer>
       {(mapContext.width > 0 && mapContext.height > 0) && (
         <svg width={mapContext.width} height={mapContext.height}>
           <g transform={`translate(${offsetX}, ${offsetY})`}>
-            {lines.map((l, idx) => (
-              <LineString key={idx}
-                geoElement={l}
-                latLngToPixel={boundLatLngToPixel}
-              />
-            ))}
-            {points.map((p, idx) => (
-              <Point key={idx}
-                geoElement={p}
-                latLngToPixel={boundLatLngToPixel}
-              />
-            ))}
+            {svgItems}
           </g>
         </svg>
       )}
