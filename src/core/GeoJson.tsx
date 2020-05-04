@@ -86,13 +86,13 @@ function GeoJson(props: Props) {
 
   const svgItems = useMemo(() => ([
     ...lines.map((l, idx) => (
-      <LineString key={idx}
+      <LineString key={`l-${idx}`}
         geoElement={l}
         latLngToPixel={boundLatLngToPixel}
       />
     )),
     ...points.map((p, idx) => (
-      <Point key={idx}
+      <Point key={`p-${idx}`}
         geoElement={p}
         latLngToPixel={boundLatLngToPixel}
       />
