@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import { useEffect, useRef, useCallback, useLayoutEffect, useState } from 'react';
 
 export function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms: number) {
   const activeThrottling = useRef<number>(0);
@@ -33,4 +33,31 @@ export function useSyncRef<T>(data: T) {
   }, [data]);
 
   return ref;
+}
+
+export function useContainerWidthHeight(containerRef: React.RefObject<HTMLElement>) {
+  const [ widthHeight, setWidthHeight ] = useState<[ number, number ]>([0, 0]);
+
+  useEffect(() => {
+    const updateSize = () => {
+      const rect = containerRef.current!.getBoundingClientRect();
+      setWidthHeight(widthHeight => {
+        if (widthHeight[0] === rect.width && widthHeight[1] === rect.height) {
+          return widthHeight;
+        }
+        return [rect.width, rect.height];
+      });
+    };
+
+    updateSize();
+
+    window.addEventListener('resize', updateSize);
+
+    return () => {
+      window.removeEventListener('resize', updateSize);
+    };
+
+  }, []);
+
+  return widthHeight;
 }
