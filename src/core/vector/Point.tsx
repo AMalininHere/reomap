@@ -1,14 +1,15 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Point as GeoPoint } from 'geojson';
 import { ElementProps } from './common';
 import { LatLng } from '../models';
+import Circle from './Circle';
 
 function Point(props: ElementProps<GeoPoint>) {
   const { geoElement: { coordinates }, latLngToPixel } = props;
-  const point = useMemo(() => latLngToPixel(new LatLng(coordinates[1], coordinates[0])), [coordinates, latLngToPixel]);
+  const center = new LatLng(coordinates[1], coordinates[0]);
 
   return (
-    <circle fill="#555555" cx={point.x} cy={point.y} r={5} />
+    <Circle latLngToPixel={latLngToPixel} center={center} radius={5}/>
   );
 }
 
