@@ -45,7 +45,7 @@ function findElements(data: G.GeoJSON) {
   return result;
 }
 
-function findContolPoint(coords: LatLng[]) {
+function findContolPoint(coords: Iterable<LatLng>) {
   let maxLat = Number.MIN_VALUE;
   let minLng = Number.MAX_VALUE;
 
@@ -55,6 +55,17 @@ function findContolPoint(coords: LatLng[]) {
   }
 
   return new LatLng(maxLat, minLng);
+}
+
+function* collectLatLngs(points: G.Point[], lines: G.LineString[]) {
+  for (const p of points) {
+    yield new LatLng(p.coordinates[1], p.coordinates[0]);
+  }
+  for (const l of lines) {
+    for (const c of l.coordinates) {
+      yield new LatLng(c[1], c[0]);
+    }
+  }
 }
 
 interface Props {
@@ -72,12 +83,7 @@ function GeoJson(props: Props) {
   const { data } = props;
   const mapContext = useMapContext();
   const { lines, points } = useMemo(() => findElements(data), [data]);
-  const controlLatLng = useMemo(() => {
-    const allPoints: LatLng[] = [];
-    allPoints.push(...points.map(p => new LatLng(p.coordinates[1], p.coordinates[0])));
-    allPoints.push(...lines.map(l => l.coordinates.map(c => new LatLng(c[1], c[0]))).reduce((acc, lls) => ([...acc, ...lls]), []));
-    return findContolPoint(allPoints)
-  }, [ points, lines ]);
+  const controlLatLng = useMemo(() => findContolPoint(collectLatLngs(points, lines)), [ points, lines ]);
   const boundLatLngToPixel = useLatLngToPixel(0, 0, mapContext.zoom, controlLatLng);
 
   const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
