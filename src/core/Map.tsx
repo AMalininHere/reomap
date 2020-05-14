@@ -97,9 +97,11 @@ function Map(props: Props) {
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
     >
-      <MapProvider value={new ContextData(center, zoom, width, height)}>
-        {props.children}
-      </MapProvider>
+      {width > 0 && height > 0 && (
+        <MapProvider value={new ContextData(center, zoom, width, height)}>
+          {props.children}
+        </MapProvider>
+      )}
     </div>
   );
 }

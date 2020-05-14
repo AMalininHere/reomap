@@ -101,13 +101,11 @@ function GeoJson(props: Props) {
 
   return (
     <Layer>
-      {(mapContext.width > 0 && mapContext.height > 0) && (
-        <svg width={mapContext.width} height={mapContext.height}>
-          <g transform={`translate(${offsetX}, ${offsetY})`}>
-            {svgItems}
-          </g>
-        </svg>
-      )}
+      <svg width={mapContext.width} height={mapContext.height}>
+        <g transform={`translate(${offsetX}, ${offsetY})`}>
+          {svgItems}
+        </g>
+      </svg>
     </Layer>
   );
 }
