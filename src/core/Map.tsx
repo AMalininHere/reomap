@@ -22,7 +22,7 @@ export interface Props {
   children: React.ReactNode | React.ReactNode[]
 }
 
-function noop() {}
+function noop() { }
 
 function Map(props: Props) {
   const {
@@ -33,7 +33,7 @@ function Map(props: Props) {
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const [ width, height ] = useContainerWidthHeight(containerRef);
+  const [width, height] = useContainerWidthHeight(containerRef);
 
   const moveStartedRef = useRef(false);
   const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
@@ -91,16 +91,16 @@ function Map(props: Props) {
   }, []);
 
   return (
-    <MapProvider value={new ContextData(center, zoom, width, height)}>
-      <div
-        style={{ position: 'relative', overflow: 'hidden', ...style }}
-        ref={containerRef}
-        onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-      >
+    <div
+      style={{ position: 'relative', overflow: 'hidden', ...style }}
+      ref={containerRef}
+      onWheel={handleWheel}
+      onMouseDown={handleMouseDown}
+    >
+      <MapProvider value={new ContextData(center, zoom, width, height)}>
         {props.children}
-      </div>
-    </MapProvider>
+      </MapProvider>
+    </div>
   );
 }
 
