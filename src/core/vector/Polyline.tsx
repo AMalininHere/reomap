@@ -13,7 +13,10 @@ export interface Props {
 }
 
 function Polyline(props: Props) {
-  const { positions, latLngToPixel } = props;
+  const {
+    positions,
+    latLngToPixel,
+  } = props;
 
   const pathString = makeSvgPath(positions.map(latLngToPixel));
 

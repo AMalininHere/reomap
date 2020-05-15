@@ -8,7 +8,11 @@ export interface Props {
 }
 
 function Circle(props: Props) {
-  const { center, radius, latLngToPixel } = props;
+  const {
+    center,
+    radius,
+    latLngToPixel,
+  } = props;
   const point = latLngToPixel(center);
 
   return (
