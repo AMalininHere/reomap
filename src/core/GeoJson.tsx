@@ -16,13 +16,15 @@ function useLatLngToPixel(width: number, height: number, zoom: number, center: L
   );
 }
 
-interface Elements {
-  lines: G.LineString[];
-  points: G.Point[];
-  polygons: G.Polygon[];
+function* lazyMap<T, R>(iterable: Iterable<T>, fn: (value: T, index: number) => R) {
+  let counter = 0;
+  for (const value of iterable) {
+    yield fn(value, counter);
+    ++counter;
+  }
 }
 
-function* findGeometries(data: G.GeoJSON): Generator<G.Geometry, void, undefined> {
+function* findGeometries(data: G.GeoJSON): Generator<G.Geometry, void, unknown> {
   if (data.type === 'LineString') {
     yield data;
   } else if (data.type === 'Point') {
@@ -38,7 +40,7 @@ function* findGeometries(data: G.GeoJSON): Generator<G.Geometry, void, undefined
   }
 }
 
-function* collectPoints(data: G.GeoJSON): Generator<LatLng, void, undefined> {
+function* collectPoints(data: G.GeoJSON) {
   for (const g of findGeometries(data)) {
     if (g.type === 'LineString') {
       for (const c of g.coordinates) {
@@ -87,7 +89,7 @@ function GeoJson(props: Props) {
 
   const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
 
-  const svgItems = useMemo(() => [...findGeometries(data)].map((g, idx) => {
+  const svgItems = useMemo(() => [...lazyMap(findGeometries(data), (g, idx) => {
     if (g.type === 'LineString') {
       const positions = g.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
 
@@ -119,7 +121,7 @@ function GeoJson(props: Props) {
     }
 
     return null;
-  }), [data, boundLatLngToPixel]);
+  })], [data, boundLatLngToPixel]);
 
   return (
     <Layer>
