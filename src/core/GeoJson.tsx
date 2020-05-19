@@ -1,10 +1,7 @@
 import React, { useMemo } from 'react';
 import * as G from 'geojson';
 import { LatLng } from './models';
-import Circle from './vector/Circle';
-import Polyline from './vector/Polyline';
-import Polygon from './vector/Polygon';
-import SvgLayer from './vector/SvgLayer';
+import { SvgLayer, Circle, Polygon, Polyline } from './vector';
 
 function* lazyMap<T, R>(iterable: Iterable<T>, fn: (value: T, index: number) => R) {
   let counter = 0;
