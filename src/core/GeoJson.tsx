@@ -22,36 +22,6 @@ interface Elements {
   polygons: G.Polygon[];
 }
 
-function findElements(data: G.GeoJSON) {
-  const result: Elements = {
-    lines: [],
-    points: [],
-    polygons: [],
-  };
-
-  if (data.type === 'LineString') {
-    result.lines.push(data);
-  } else if (data.type === 'Point') {
-    result.points.push(data);
-  } else if (data.type === 'Polygon') {
-    result.polygons.push(data);
-  } else if (data.type === 'Feature' ) {
-    const childResult = findElements(data.geometry);
-    result.lines.push(...childResult.lines);
-    result.points.push(...childResult.points);
-    result.polygons.push(...childResult.polygons);
-  } else if (data.type === 'FeatureCollection') {
-    for (const g of data.features) {
-      const childResult = findElements(g);
-      result.lines.push(...childResult.lines);
-      result.points.push(...childResult.points);
-      result.polygons.push(...childResult.polygons);
-    }
-  }
-
-  return result;
-}
-
 function* findGeometries(data: G.GeoJSON): Generator<G.Geometry, void, undefined> {
   if (data.type === 'LineString') {
     yield data;
@@ -112,15 +82,14 @@ function useGeoOffsets(ctx: ContextData, controlLatLng: LatLng) {
 function GeoJson(props: Props) {
   const { data } = props;
   const mapContext = useMapContext();
-  const { lines, points, polygons } = useMemo(() => findElements(data), [data]);
   const controlLatLng = useMemo(() => findContolPoint(collectPoints(data)), [ data ]);
   const boundLatLngToPixel = useLatLngToPixel(0, 0, mapContext.zoom, controlLatLng);
 
   const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
 
-  const svgItems = useMemo(() => ([
-    ...lines.map((l, idx) => {
-      const positions = l.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
+  const svgItems = useMemo(() => [...findGeometries(data)].map((g, idx) => {
+    if (g.type === 'LineString') {
+      const positions = g.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
 
       return (
         <Polyline key={`l-${idx}`}
@@ -128,9 +97,8 @@ function GeoJson(props: Props) {
           latLngToPixel={boundLatLngToPixel}
         />
       );
-    }),
-    ...points.map((p, idx) => {
-      const center = new LatLng(p.coordinates[1], p.coordinates[0]);
+    } else if (g.type === 'Point') {
+      const center = new LatLng(g.coordinates[1], g.coordinates[0]);
 
       return (
         <Circle key={`p-${idx}`}
@@ -139,9 +107,8 @@ function GeoJson(props: Props) {
           latLngToPixel={boundLatLngToPixel}
         />
       );
-    }),
-    ...polygons.map((p, idx) => {
-      const positions = p.coordinates.map(pp => pp.map(([lng, lat]) => new LatLng(lat, lng)));
+    } else if (g.type === 'Polygon') {
+      const positions = g.coordinates.map(pp => pp.map(([lng, lat]) => new LatLng(lat, lng)));
 
       return (
         <Polygon key={`pp-${idx}`}
@@ -149,8 +116,10 @@ function GeoJson(props: Props) {
           latLngToPixel={boundLatLngToPixel}
         />
       );
-    })
-  ]), [lines, points, polygons, boundLatLngToPixel])
+    }
+
+    return null;
+  }), [data, boundLatLngToPixel]);
 
   return (
     <Layer>
