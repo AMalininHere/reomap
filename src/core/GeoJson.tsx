@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react';
 import * as G from 'geojson';
-import Layer from './Layer';
-import { lat2tile, lng2tile } from './utils/geo-fns';
 import { LatLng } from './models';
-import { useMapContext, MapProvider, ContextData } from './Context';
 import Circle from './vector/Circle';
 import Polyline from './vector/Polyline';
 import Polygon from './vector/Polygon';
+import SvgLayer from './vector/SvgLayer';
 
 function* lazyMap<T, R>(iterable: Iterable<T>, fn: (value: T, index: number) => R) {
   let counter = 0;
@@ -66,23 +64,9 @@ interface Props {
   data: G.GeoJSON;
 }
 
-function useGeoOffsets(ctx: ContextData, controlLatLng: LatLng) {
-  const offsetX = (lng2tile(controlLatLng.lng, ctx.zoom) - lng2tile(ctx.center.lng, ctx.zoom)) * 256 + ctx.width / 2;
-  const offsetY = (lat2tile(controlLatLng.lat, ctx.zoom) - lat2tile(ctx.center.lat, ctx.zoom)) * 256 + ctx.height / 2;
-
-  return { offsetX, offsetY };
-}
-
 function GeoJson(props: Props) {
   const { data } = props;
-  const mapContext = useMapContext();
   const controlLatLng = useMemo(() => findContolPoint(collectPoints(data)), [data]);
-  const relativeContextData = useMemo(
-    () => new ContextData(controlLatLng, mapContext.zoom, 0, 0),
-    [mapContext.zoom, controlLatLng]
-  );
-
-  const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
 
   const svgItems = useMemo(() => [...lazyMap(findGeometries(data), (g, idx) => {
     if (g.type === 'LineString') {
@@ -116,15 +100,9 @@ function GeoJson(props: Props) {
   })], [data]);
 
   return (
-    <Layer>
-      <svg width={mapContext.width} height={mapContext.height}>
-        <g transform={`translate(${offsetX}, ${offsetY})`}>
-          <MapProvider value={relativeContextData}>
-            {svgItems}
-          </MapProvider>
-        </g>
-      </svg>
-    </Layer>
+    <SvgLayer center={controlLatLng}>
+      {svgItems}
+    </SvgLayer>
   );
 }
 
