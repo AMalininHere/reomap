@@ -52,24 +52,36 @@ function findElements(data: G.GeoJSON) {
   return result;
 }
 
-function* collectPoints(data: G.GeoJSON): Generator<LatLng, void, undefined> {
+function* findGeometries(data: G.GeoJSON): Generator<G.Geometry, void, undefined> {
   if (data.type === 'LineString') {
-    for (const c of data.coordinates) {
-      yield new LatLng(c[1], c[0]);
-    }
+    yield data;
   } else if (data.type === 'Point') {
-    yield new LatLng(data.coordinates[1], data.coordinates[0]);
+    yield data;
   } else if (data.type === 'Polygon') {
-    for (const part of data.coordinates) {
-      for (const c of part) {
-        yield new LatLng(c[1], c[0]);
-      }
-    }
+    yield data;
   } else if (data.type === 'Feature' ) {
-    yield* collectPoints(data.geometry);
+    yield* findGeometries(data.geometry);
   } else if (data.type === 'FeatureCollection') {
     for (const f of data.features) {
-      yield* collectPoints(f);
+      yield* findGeometries(f);
+    }
+  }
+}
+
+function* collectPoints(data: G.GeoJSON): Generator<LatLng, void, undefined> {
+  for (const g of findGeometries(data)) {
+    if (g.type === 'LineString') {
+      for (const c of g.coordinates) {
+        yield new LatLng(c[1], c[0]);
+      }
+    } else if (g.type === 'Point') {
+      yield new LatLng(g.coordinates[1], g.coordinates[0]);
+    } else if (g.type === 'Polygon') {
+      for (const part of g.coordinates) {
+        for (const c of part) {
+          yield new LatLng(c[1], c[0]);
+        }
+      }
     }
   }
 }
