@@ -66,34 +66,32 @@ function GeoJson(props: Props) {
   const controlLatLng = useMemo(() => findContolPoint(collectPoints(data)), [data]);
 
   const svgItems = useMemo(() => [...lazyMap(findGeometries(data), (g, idx) => {
-    if (g.type === 'LineString') {
-      const positions = g.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
+    switch (g.type) {
+      case 'Point': {
+        const center = new LatLng(g.coordinates[1], g.coordinates[0]);
+        return (
+          <Circle key={`point-${idx}`} center={center} radius={5} />
+        );
+      }
 
-      return (
-        <Polyline key={`line-${idx}`}
-          positions={positions}
-        />
-      );
-    } else if (g.type === 'Point') {
-      const center = new LatLng(g.coordinates[1], g.coordinates[0]);
+      case 'LineString': {
+        const positions = g.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
+        return (
+          <Polyline key={`line-${idx}`} positions={positions} />
+        );
+      }
 
-      return (
-        <Circle key={`point-${idx}`}
-          center={center}
-          radius={5}
-        />
-      );
-    } else if (g.type === 'Polygon') {
-      const positions = g.coordinates.map(pp => pp.map(([lng, lat]) => new LatLng(lat, lng)));
+      case 'Polygon': {
+        const positions = g.coordinates.map(pp => pp.map(([lng, lat]) => new LatLng(lat, lng)));
+        return (
+          <Polygon key={`polygon-${idx}`} positions={positions} />
+        );
+      }
 
-      return (
-        <Polygon key={`polygon-${idx}`}
-          positions={positions}
-        />
-      );
+      default: {
+        return null;
+      }
     }
-
-    return null;
   })], [data]);
 
   return (
