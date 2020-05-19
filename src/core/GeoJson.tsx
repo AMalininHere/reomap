@@ -1,12 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
 import * as G from 'geojson';
 import Layer from './Layer';
-import Point from './vector/Point';
-import LineString from './vector/LineString';
 import { lat2tile, lng2tile } from './utils/geo-fns';
 import { latLngToPixel } from './common';
 import { LatLng } from './models';
 import { useMapContext, ContextData } from './Context';
+import Circle from './vector/Circle';
+import Polyline from './vector/Polyline';
 
 function useLatLngToPixel(width: number, height: number, zoom: number, center: LatLng) {
   return useCallback(
@@ -101,18 +101,27 @@ function GeoJson(props: Props) {
   const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
 
   const svgItems = useMemo(() => ([
-    ...lines.map((l, idx) => (
-      <LineString key={`l-${idx}`}
-        geoElement={l}
-        latLngToPixel={boundLatLngToPixel}
-      />
-    )),
-    ...points.map((p, idx) => (
-      <Point key={`p-${idx}`}
-        geoElement={p}
-        latLngToPixel={boundLatLngToPixel}
-      />
-    ))
+    ...lines.map((l, idx) => {
+      const positions = l.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
+
+      return (
+        <Polyline key={`l-${idx}`}
+          positions={positions}
+          latLngToPixel={boundLatLngToPixel}
+        />
+      );
+    }),
+    ...points.map((p, idx) => {
+      const center = new LatLng(p.coordinates[1], p.coordinates[0]);
+
+      return (
+        <Circle key={`p-${idx}`}
+          center={center}
+          radius={5}
+          latLngToPixel={boundLatLngToPixel}
+        />
+      );
+    })
   ]), [lines, points, boundLatLngToPixel])
 
   return (
