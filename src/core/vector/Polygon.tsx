@@ -1,4 +1,5 @@
 import React from 'react';
+import { useMapContext } from '../Context';
 import { LatLng, Point } from '../models';
 
 function makeSvgPath(points: Point[]) {
@@ -9,17 +10,17 @@ function makeSvgPath(points: Point[]) {
 
 interface Props {
   positions: LatLng[][];
-  latLngToPixel: (ll: LatLng) => Point;
 }
 
 function Polygon(props: Props) {
   const {
     positions,
-    latLngToPixel,
   } = props;
 
+  const mapContext = useMapContext();
+
   const pathString = positions
-    .map(subPositions => subPositions.map(latLngToPixel))
+    .map(subPositions => subPositions.map(mapContext.latLngToPixel))
     .map(makeSvgPath)
     .join(' ');
 

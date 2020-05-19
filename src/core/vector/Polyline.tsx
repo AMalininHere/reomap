@@ -1,4 +1,5 @@
 import React from 'react';
+import { useMapContext } from '../Context';
 import { LatLng, Point } from '../models';
 
 function makeSvgPath(points: Point[]) {
@@ -9,16 +10,15 @@ function makeSvgPath(points: Point[]) {
 
 export interface Props {
   positions: LatLng[];
-  latLngToPixel: (ll: LatLng) => Point;
 }
 
 function Polyline(props: Props) {
   const {
     positions,
-    latLngToPixel,
   } = props;
+  const mapContext = useMapContext();
 
-  const pathString = makeSvgPath(positions.map(latLngToPixel));
+  const pathString = makeSvgPath(positions.map(mapContext.latLngToPixel));
 
   return (
     <path fill="none" stroke="#555555" strokeWidth={2} d={pathString} />

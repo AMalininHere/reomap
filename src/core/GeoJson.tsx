@@ -1,20 +1,12 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import * as G from 'geojson';
 import Layer from './Layer';
 import { lat2tile, lng2tile } from './utils/geo-fns';
-import { latLngToPixel } from './common';
 import { LatLng } from './models';
-import { useMapContext, ContextData } from './Context';
+import { useMapContext, MapProvider, ContextData } from './Context';
 import Circle from './vector/Circle';
 import Polyline from './vector/Polyline';
 import Polygon from './vector/Polygon';
-
-function useLatLngToPixel(width: number, height: number, zoom: number, center: LatLng) {
-  return useCallback(
-    (latLng: LatLng) => latLngToPixel(width, height, zoom, center, latLng),
-    [width, height, zoom, center]
-  );
-}
 
 function* lazyMap<T, R>(iterable: Iterable<T>, fn: (value: T, index: number) => R) {
   let counter = 0;
@@ -31,7 +23,7 @@ function* findGeometries(data: G.GeoJSON): Generator<G.Geometry, void, unknown> 
     yield data;
   } else if (data.type === 'Polygon') {
     yield data;
-  } else if (data.type === 'Feature' ) {
+  } else if (data.type === 'Feature') {
     yield* findGeometries(data.geometry);
   } else if (data.type === 'FeatureCollection') {
     for (const f of data.features) {
@@ -84,8 +76,11 @@ function useGeoOffsets(ctx: ContextData, controlLatLng: LatLng) {
 function GeoJson(props: Props) {
   const { data } = props;
   const mapContext = useMapContext();
-  const controlLatLng = useMemo(() => findContolPoint(collectPoints(data)), [ data ]);
-  const boundLatLngToPixel = useLatLngToPixel(0, 0, mapContext.zoom, controlLatLng);
+  const controlLatLng = useMemo(() => findContolPoint(collectPoints(data)), [data]);
+  const relativeContextData = useMemo(
+    () => new ContextData(controlLatLng, mapContext.zoom, 0, 0),
+    [mapContext.zoom, controlLatLng]
+  );
 
   const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
 
@@ -96,7 +91,6 @@ function GeoJson(props: Props) {
       return (
         <Polyline key={`line-${idx}`}
           positions={positions}
-          latLngToPixel={boundLatLngToPixel}
         />
       );
     } else if (g.type === 'Point') {
@@ -106,7 +100,6 @@ function GeoJson(props: Props) {
         <Circle key={`point-${idx}`}
           center={center}
           radius={5}
-          latLngToPixel={boundLatLngToPixel}
         />
       );
     } else if (g.type === 'Polygon') {
@@ -115,19 +108,20 @@ function GeoJson(props: Props) {
       return (
         <Polygon key={`polygon-${idx}`}
           positions={positions}
-          latLngToPixel={boundLatLngToPixel}
         />
       );
     }
 
     return null;
-  })], [data, boundLatLngToPixel]);
+  })], [data]);
 
   return (
     <Layer>
       <svg width={mapContext.width} height={mapContext.height}>
         <g transform={`translate(${offsetX}, ${offsetY})`}>
-          {svgItems}
+          <MapProvider value={relativeContextData}>
+            {svgItems}
+          </MapProvider>
         </g>
       </svg>
     </Layer>
