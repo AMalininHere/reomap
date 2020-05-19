@@ -57,7 +57,7 @@ export function useContainerWidthHeight(containerRef: React.RefObject<HTMLElemen
       window.removeEventListener('resize', updateSize);
     };
 
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return widthHeight;
 }
