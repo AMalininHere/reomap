@@ -67,6 +67,7 @@ function Tiles(props: Props) {
       tiles.push(
         <img
           key={`${x}-${y}-${zoom}`}
+          alt={`${x}-${y}-${zoom}`}
           src={provider(x, y, zoom)}
           loading="lazy"
           className={tileClassName}
