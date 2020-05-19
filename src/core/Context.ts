@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { LatLng } from './models';
-import { latLngToPixel } from './common';
+import { LatLng, Point } from './models';
+import { latLngToPixel, pixelToLatLng } from './common';
 
 export class ContextData {
   constructor(
@@ -12,6 +12,9 @@ export class ContextData {
 
   public readonly latLngToPixel = (source: LatLng) =>
     latLngToPixel(this.width, this.height, this.zoom, this.center, source);
+
+  public readonly pixelToLatLng = (source: Point) =>
+    pixelToLatLng(this.width, this.height, this.zoom, this.center, source);
 }
 
 const ctx = React.createContext<ContextData>(null!);
