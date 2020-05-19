@@ -94,7 +94,7 @@ function GeoJson(props: Props) {
       const positions = g.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
 
       return (
-        <Polyline key={`l-${idx}`}
+        <Polyline key={`line-${idx}`}
           positions={positions}
           latLngToPixel={boundLatLngToPixel}
         />
@@ -103,7 +103,7 @@ function GeoJson(props: Props) {
       const center = new LatLng(g.coordinates[1], g.coordinates[0]);
 
       return (
-        <Circle key={`p-${idx}`}
+        <Circle key={`point-${idx}`}
           center={center}
           radius={5}
           latLngToPixel={boundLatLngToPixel}
@@ -113,7 +113,7 @@ function GeoJson(props: Props) {
       const positions = g.coordinates.map(pp => pp.map(([lng, lat]) => new LatLng(lat, lng)));
 
       return (
-        <Polygon key={`pp-${idx}`}
+        <Polygon key={`polygon-${idx}`}
           positions={positions}
           latLngToPixel={boundLatLngToPixel}
         />
