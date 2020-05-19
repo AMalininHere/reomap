@@ -45,6 +45,22 @@ function findElements(data: G.GeoJSON) {
   return result;
 }
 
+function* collectPoints(data: G.GeoJSON): Generator<LatLng, void, undefined> {
+  if (data.type === 'LineString') {
+    for (const c of data.coordinates) {
+      yield new LatLng(c[1], c[0]);
+    }
+  } else if (data.type === 'Point') {
+    yield new LatLng(data.coordinates[1], data.coordinates[0]);
+  } else if (data.type === 'Feature' ) {
+    yield* collectPoints(data.geometry);
+  } else if (data.type === 'FeatureCollection') {
+    for (const f of data.features) {
+      yield* collectPoints(f);
+    }
+  }
+}
+
 function findContolPoint(coords: Iterable<LatLng>) {
   let maxLat = Number.MIN_VALUE;
   let minLng = Number.MAX_VALUE;
@@ -55,26 +71,6 @@ function findContolPoint(coords: Iterable<LatLng>) {
   }
 
   return new LatLng(maxLat, minLng);
-}
-
-function* combineIterables<T>(...iterables: Iterable<T>[]) {
-  for (const iterable of iterables) {
-    yield* iterable;
-  }
-}
-
-function* getCoordsFromPoints(points: G.Point[]) {
-  for (const p of points) {
-    yield new LatLng(p.coordinates[1], p.coordinates[0]);
-  }
-}
-
-function* getCoordsFromLineStrings(lines: G.LineString[]) {
-  for (const l of lines) {
-    for (const c of l.coordinates) {
-      yield new LatLng(c[1], c[0]);
-    }
-  }
 }
 
 interface Props {
@@ -92,10 +88,7 @@ function GeoJson(props: Props) {
   const { data } = props;
   const mapContext = useMapContext();
   const { lines, points } = useMemo(() => findElements(data), [data]);
-  const controlLatLng = useMemo(() => findContolPoint(combineIterables(
-    getCoordsFromPoints(points),
-    getCoordsFromLineStrings(lines),
-  )), [ points, lines ]);
+  const controlLatLng = useMemo(() => findContolPoint(collectPoints(data)), [ data ]);
   const boundLatLngToPixel = useLatLngToPixel(0, 0, mapContext.zoom, controlLatLng);
 
   const { offsetX, offsetY } = useGeoOffsets(mapContext, controlLatLng);
