@@ -25,15 +25,16 @@ function* collectPoints(data: G.GeoJSON) {
   for (const feature of findFeatures(data)) {
     const g = feature.geometry;
     if (g.type === 'LineString') {
-      for (const c of g.coordinates) {
-        yield new LatLng(c[1], c[0]);
+      for (const [lng, lat] of g.coordinates) {
+        yield new LatLng(lat, lng);
       }
     } else if (g.type === 'Point') {
-      yield new LatLng(g.coordinates[1], g.coordinates[0]);
+      const [lng, lat] = g.coordinates;
+      yield new LatLng(lat, lng);
     } else if (g.type === 'Polygon') {
       for (const part of g.coordinates) {
-        for (const c of part) {
-          yield new LatLng(c[1], c[0]);
+        for (const [lng, lat] of part) {
+          yield new LatLng(lat, lng);
         }
       }
     }
