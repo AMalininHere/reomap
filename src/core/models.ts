@@ -3,6 +3,13 @@ export class LatLng {
     public readonly lat: number,
     public readonly lng: number,
   ) { }
+
+  equals(other: LatLng) {
+    return (
+      this.lat === other.lat &&
+      this.lng === other.lng
+    );
+  }
 }
 
 export class Point {
