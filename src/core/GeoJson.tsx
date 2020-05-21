@@ -11,24 +11,19 @@ function* lazyMap<T, R>(iterable: Iterable<T>, fn: (value: T, index: number) => 
   }
 }
 
-function* findGeometries(data: G.GeoJSON): Generator<G.Geometry, void, unknown> {
-  if (data.type === 'LineString') {
+function* findFeatures(data: G.GeoJSON): Generator<G.Feature, void, unknown> {
+  if (data.type === 'Feature') {
     yield data;
-  } else if (data.type === 'Point') {
-    yield data;
-  } else if (data.type === 'Polygon') {
-    yield data;
-  } else if (data.type === 'Feature') {
-    yield* findGeometries(data.geometry);
   } else if (data.type === 'FeatureCollection') {
-    for (const f of data.features) {
-      yield* findGeometries(f);
+    for (const feature of data.features) {
+      yield feature;
     }
   }
 }
 
 function* collectPoints(data: G.GeoJSON) {
-  for (const g of findGeometries(data)) {
+  for (const feature of findFeatures(data)) {
+    const g = feature.geometry;
     if (g.type === 'LineString') {
       for (const c of g.coordinates) {
         yield new LatLng(c[1], c[0]);
@@ -65,26 +60,27 @@ function GeoJson(props: Props) {
   const { data } = props;
   const controlLatLng = useMemo(() => findContolPoint(collectPoints(data)), [data]);
 
-  const svgItems = useMemo(() => [...lazyMap(findGeometries(data), (g, idx) => {
+  const svgItems = useMemo(() => [...lazyMap(findFeatures(data), (feature, idx) => {
+    const g = feature.geometry;
     switch (g.type) {
       case 'Point': {
         const center = new LatLng(g.coordinates[1], g.coordinates[0]);
         return (
-          <Circle key={`point-${idx}`} center={center} radius={5} />
+          <Circle key={`point-${feature.id ?? idx}`} center={center} radius={5} />
         );
       }
 
       case 'LineString': {
         const positions = g.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
         return (
-          <Polyline key={`line-${idx}`} positions={positions} />
+          <Polyline key={`line-${feature.id ?? idx}`} positions={positions} />
         );
       }
 
       case 'Polygon': {
         const positions = g.coordinates.map(pp => pp.map(([lng, lat]) => new LatLng(lat, lng)));
         return (
-          <Polygon key={`polygon-${idx}`} positions={positions} />
+          <Polygon key={`polygon-${feature.id ?? idx}`} positions={positions} />
         );
       }
 
