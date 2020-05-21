@@ -14,6 +14,7 @@ function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
 
 export interface Props {
   style?: React.CSSProperties;
+  className?: string;
 
   zoom: number;
   center: LatLng;
@@ -26,6 +27,7 @@ function noop() { }
 function Map(props: Props) {
   const {
     style,
+    className,
     zoom,
     center,
     onChangeCenterZoom = noop,
@@ -93,6 +95,7 @@ function Map(props: Props) {
   return (
     <div
       style={{ position: 'relative', overflow: 'hidden', ...style }}
+      className={className}
       ref={containerRef}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
