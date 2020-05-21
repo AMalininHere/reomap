@@ -10,11 +10,4 @@ export class Point {
     public readonly x: number,
     public readonly y: number,
   ) { }
-
-  substract(other: Point) {
-    return new Point(
-      this.x - other.x,
-      this.y - other.y
-    )
-  }
 }
