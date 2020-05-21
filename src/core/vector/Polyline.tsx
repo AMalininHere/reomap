@@ -12,16 +12,25 @@ export interface Props {
   positions: LatLng[];
 }
 
-function Polyline(props: Props) {
+type PathProps =
+  & Pick<React.SVGAttributes<SVGPathElement>, 'stroke'>;
+
+function Polyline(props: Props & PathProps) {
   const {
     positions,
+    ...pathProps
   } = props;
   const mapContext = useMapContext();
 
   const pathString = makeSvgPath(positions.map(mapContext.latLngToPixel));
 
+  const pathPropsWitdhDefaults: PathProps = {
+    stroke: '#555555',
+    ...pathProps
+  };
+
   return (
-    <path fill="none" stroke="#555555" strokeWidth={2} d={pathString} />
+    <path {...pathPropsWitdhDefaults} fill="none" strokeWidth={2} d={pathString} />
   );
 }
 

@@ -7,17 +7,26 @@ export interface Props {
   radius: number;
 }
 
-function Circle(props: Props) {
+type CirlceProps =
+  & Pick<React.SVGAttributes<SVGCircleElement>, 'fill'>;
+
+function Circle(props: Props & CirlceProps) {
   const {
     center,
     radius,
+    ...circleProps
   } = props;
   const mapContext = useMapContext();
 
   const point = mapContext.latLngToPixel(center);
 
+  const circlePropsWidthDefaults: CirlceProps = {
+    fill: '#555555',
+    ...circleProps
+  }
+
   return (
-    <circle fill="#555555" cx={point.x} cy={point.y} r={radius} />
+    <circle {...circlePropsWidthDefaults} cx={point.x} cy={point.y} r={radius} />
   );
 }
 
