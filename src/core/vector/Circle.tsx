@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Ref } from 'react';
 import { useMapContext } from '../Context';
 import { LatLng } from '../models';
 
@@ -10,7 +10,7 @@ export interface Props {
 type CirlceProps =
   & Pick<React.SVGAttributes<SVGCircleElement>, 'fill'>;
 
-function Circle(props: Props & CirlceProps) {
+function Circle(props: Props & CirlceProps, ref: Ref<SVGCircleElement>) {
   const {
     center,
     radius,
@@ -26,8 +26,8 @@ function Circle(props: Props & CirlceProps) {
   }
 
   return (
-    <circle {...circlePropsWidthDefaults} cx={point.x} cy={point.y} r={radius} />
+    <circle ref={ref} {...circlePropsWidthDefaults} cx={point.x} cy={point.y} r={radius} />
   );
 }
 
-export default React.memo(Circle);
+export default React.memo(React.forwardRef(Circle));

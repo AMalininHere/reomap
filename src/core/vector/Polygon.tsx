@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Ref } from 'react';
 import { useMapContext } from '../Context';
 import { LatLng, Point } from '../models';
 
@@ -12,7 +12,7 @@ interface Props {
   positions: LatLng[][];
 }
 
-function Polygon(props: Props) {
+function Polygon(props: Props, ref: Ref<SVGPathElement>) {
   const {
     positions,
   } = props;
@@ -26,8 +26,8 @@ function Polygon(props: Props) {
 
 
   return (
-    <path fillRule="evenodd" fillOpacity="0.5" stroke="#555555" fill="#555555" strokeWidth={2} d={pathString} />
+    <path ref={ref} fillRule="evenodd" fillOpacity="0.5" stroke="#555555" fill="#555555" strokeWidth={2} d={pathString} />
   );
 }
 
-export default React.memo(Polygon);
+export default React.memo(React.forwardRef(Polygon));

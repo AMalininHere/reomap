@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Ref } from 'react';
 import { useMapContext } from '../Context';
 import { LatLng, Point } from '../models';
 
@@ -15,7 +15,7 @@ export interface Props {
 type PathProps =
   & Pick<React.SVGAttributes<SVGPathElement>, 'stroke'>;
 
-function Polyline(props: Props & PathProps) {
+function Polyline(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   const {
     positions,
     ...pathProps
@@ -30,8 +30,8 @@ function Polyline(props: Props & PathProps) {
   };
 
   return (
-    <path {...pathPropsWitdhDefaults} fill="none" strokeWidth={2} d={pathString} />
+    <path ref={ref} {...pathPropsWitdhDefaults} fill="none" strokeWidth={2} d={pathString} />
   );
 }
 
-export default React.memo(Polyline);
+export default React.memo(React.forwardRef(Polyline));
