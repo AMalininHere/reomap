@@ -12,9 +12,12 @@ interface Props {
   positions: LatLng[][];
 }
 
+type PathProps = Omit<React.SVGAttributes<SVGPathElement>, 'fillRule' | 'd'>;
+
 function Polygon(props: Props, ref: Ref<SVGPathElement>) {
   const {
     positions,
+    ...pathProps
   } = props;
 
   const mapContext = useMapContext();
@@ -24,9 +27,16 @@ function Polygon(props: Props, ref: Ref<SVGPathElement>) {
     .map(makeSvgPath)
     .join(' ');
 
+  const pathPropsWitdhDefaults: PathProps = {
+    strokeWidth: 2,
+    stroke: '#555555',
+    fill: '#555555',
+    fillOpacity: 0.5,
+    ...pathProps
+  };
 
   return (
-    <path ref={ref} fillRule="evenodd" fillOpacity="0.5" stroke="#555555" fill="#555555" strokeWidth={2} d={pathString} />
+    <path ref={ref} {...pathPropsWitdhDefaults} fillRule="evenodd" d={pathString} />
   );
 }
 
