@@ -67,6 +67,7 @@ function Map(props: Props) {
   });
 
   const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
     if (e.deltaY > 0) {
       throttledOnChangeCenterZoom(center, zoom - 1);
     } else {
