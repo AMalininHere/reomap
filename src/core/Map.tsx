@@ -68,14 +68,20 @@ function Map(props: Props) {
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
+    const mouseLatLng = mapContextData.pixelToLatLng(getMousePoint(containerRef.current!, e));
+    const diffLat = (mouseLatLng.lat - center.lat);
+    const diffLng = (mouseLatLng.lng - center.lng);
     if (e.deltaY > 0) {
-      throttledOnChangeCenterZoom(center, zoom - 1);
-    } else {
-      const mousePos = mapContextData.pixelToLatLng(getMousePoint(containerRef.current!, e));
       const nextCenter = new LatLng(
-        (center.lat + mousePos.lat) / 2,
-        (center.lng + mousePos.lng) / 2
-      )
+        (center.lat - diffLat),
+        (center.lng - diffLng)
+      );
+      throttledOnChangeCenterZoom(nextCenter, zoom - 1);
+    } else {
+      const nextCenter = new LatLng(
+        (center.lat + diffLat / 2),
+        (center.lng + diffLng / 2)
+      );
       throttledOnChangeCenterZoom(nextCenter, zoom + 1);
     }
   };
