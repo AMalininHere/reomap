@@ -3,6 +3,10 @@ import * as G from 'geojson';
 import { LatLng } from './models';
 import { SvgLayer, Circle, Polygon, Polyline } from './vector';
 
+function positionToLatLng([lng, lat]: G.Position) {
+  return new LatLng(lat, lng);
+}
+
 function* lazyMap<T, R>(iterable: Iterable<T>, fn: (value: T, index: number) => R) {
   let counter = 0;
   for (const value of iterable) {
@@ -25,16 +29,15 @@ function* collectPoints(data: G.GeoJSON) {
   for (const feature of findFeatures(data)) {
     const g = feature.geometry;
     if (g.type === 'LineString') {
-      for (const [lng, lat] of g.coordinates) {
-        yield new LatLng(lat, lng);
+      for (const c of g.coordinates) {
+        yield positionToLatLng(c);
       }
     } else if (g.type === 'Point') {
-      const [lng, lat] = g.coordinates;
-      yield new LatLng(lat, lng);
+      yield positionToLatLng(g.coordinates);
     } else if (g.type === 'Polygon') {
       for (const part of g.coordinates) {
-        for (const [lng, lat] of part) {
-          yield new LatLng(lat, lng);
+        for (const c of part) {
+          yield positionToLatLng(c);
         }
       }
     }
@@ -65,21 +68,21 @@ function GeoJson(props: Props) {
     const g = feature.geometry;
     switch (g.type) {
       case 'Point': {
-        const center = new LatLng(g.coordinates[1], g.coordinates[0]);
+        const center = positionToLatLng(g.coordinates);
         return (
           <Circle key={`point-${feature.id ?? idx}`} center={center} radius={5} />
         );
       }
 
       case 'LineString': {
-        const positions = g.coordinates.map(([lng, lat]) => new LatLng(lat, lng));
+        const positions = g.coordinates.map(positionToLatLng);
         return (
           <Polyline key={`line-${feature.id ?? idx}`} positions={positions} />
         );
       }
 
       case 'Polygon': {
-        const positions = g.coordinates.map(pp => pp.map(([lng, lat]) => new LatLng(lat, lng)));
+        const positions = g.coordinates.map(pp => pp.map(positionToLatLng));
         return (
           <Polygon key={`polygon-${feature.id ?? idx}`} positions={positions} />
         );
