@@ -2,8 +2,7 @@ import React from 'react';
 import { LatLng } from './models';
 import { lng2tile, lat2tile } from './utils/geo-fns';
 import { useMapContext } from './Context';
-
-const TILE_SIZE = 256;
+import { TILE_SIZE } from './common';
 
 function useTileValues(center: LatLng, zoom: number, width: number, height: number) {
   const tileCenterX = lng2tile(center.lng, zoom);

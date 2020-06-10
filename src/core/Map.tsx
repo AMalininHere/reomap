@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useEffect } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { Point, LatLng } from './models';
 import { MapProvider, ContextData } from './Context';
+import { TILE_SIZE } from './common';
 import { useThrottleCallback, useSyncRef, useContainerWidthHeight } from './utils/hooks';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
@@ -59,8 +60,8 @@ function Map(props: Props) {
   const mouseMoveRef = useSyncRef((e: MouseEvent) => {
     if (moveStartedRef.current && props.onChangeCenterZoom) {
       e.preventDefault();
-      const lat = tile2lat(lat2tile(center.lat, zoom) - (e.movementY / 256.0), zoom);
-      const lng = tile2lng(lng2tile(center.lng, zoom) - (e.movementX / 256.0), zoom);
+      const lat = tile2lat(lat2tile(center.lat, zoom) - (e.movementY / TILE_SIZE), zoom);
+      const lng = tile2lng(lng2tile(center.lng, zoom) - (e.movementX / TILE_SIZE), zoom);
       const result = new LatLng(lat, lng);
       props.onChangeCenterZoom(result, zoom);
     }

@@ -1,6 +1,8 @@
 import { tile2lat, tile2lng, lng2tile, lat2tile } from './utils/geo-fns';
 import { LatLng, Point } from './models';
 
+export const TILE_SIZE = 256;
+
 export const absMinLatLng = new LatLng(
   tile2lat(Math.pow(2, 10), 10),
   tile2lng(0, 10)
@@ -12,8 +14,8 @@ export const absMaxLatLng = new LatLng(
 );
 
 export function pixelToLatLng(width: number, height: number, zoom: number, center: LatLng, source: Point) {
-  const pointDiffX = (source.x - width / 2) / 256.0;
-  const pointDiffY = (source.y - height / 2) / 256.0;
+  const pointDiffX = (source.x - width / 2) / TILE_SIZE;
+  const pointDiffY = (source.y - height / 2) / TILE_SIZE;
 
   const tileX = lng2tile(center.lng, zoom) + pointDiffX;
   const tileY = lat2tile(center.lat, zoom) + pointDiffY;
@@ -32,7 +34,7 @@ export function latLngToPixel(width: number, height: number, zoom: number, cente
   const tileY = lat2tile(source.lat, zoom);
 
   return new Point(
-    (tileX - tileCenterX) * 256.0 + width / 2,
-    (tileY - tileCenterY) * 256.0 + height / 2
+    (tileX - tileCenterX) * TILE_SIZE + width / 2,
+    (tileY - tileCenterY) * TILE_SIZE + height / 2
   );
 };

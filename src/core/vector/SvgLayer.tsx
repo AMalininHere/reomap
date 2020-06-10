@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useMapContext, MapProvider, ContextData } from '../Context';
 import Layer from '../Layer';
 import { LatLng } from '../models';
+import { TILE_SIZE } from '../common';
 import { lng2tile, lat2tile } from '../utils/geo-fns';
 
 interface Props {
@@ -20,8 +21,8 @@ function SvgLayer(props: Props) {
     [center, ctx.zoom]
   );
 
-  const offsetX = (lng2tile(center.lng, ctx.zoom) - lng2tile(ctx.center.lng, ctx.zoom)) * 256 + ctx.width / 2;
-  const offsetY = (lat2tile(center.lat, ctx.zoom) - lat2tile(ctx.center.lat, ctx.zoom)) * 256 + ctx.height / 2;
+  const offsetX = (lng2tile(center.lng, ctx.zoom) - lng2tile(ctx.center.lng, ctx.zoom)) * TILE_SIZE + ctx.width / 2;
+  const offsetY = (lat2tile(center.lat, ctx.zoom) - lat2tile(ctx.center.lat, ctx.zoom)) * TILE_SIZE + ctx.height / 2;
 
   return (
     <Layer>
