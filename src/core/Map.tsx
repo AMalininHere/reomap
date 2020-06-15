@@ -5,7 +5,7 @@ import { MapProvider, ContextData } from './Context';
 import { TILE_SIZE } from './common';
 import { useThrottleCallback, useSyncRef, useContainerWidthHeight } from './utils/hooks';
 
-function getMousePoint(domElement: HTMLElement, event: React.MouseEvent) {
+function getMousePoint(domElement: HTMLElement, event: React.MouseEvent | MouseEvent) {
   const elementRect = domElement.getBoundingClientRect();
   return new Point(
     event.clientX - elementRect.left,
@@ -67,7 +67,7 @@ function Map(props: Props) {
     }
   });
 
-  const handleWheel = (e: React.WheelEvent) => {
+  const handleWheelRef = useSyncRef((e: WheelEvent) => {
     e.preventDefault();
     const mouseLatLng = mapContextData.pixelToLatLng(getMousePoint(containerRef.current!, e));
     const diffLat = (mouseLatLng.lat - center.lat);
@@ -85,18 +85,23 @@ function Map(props: Props) {
       );
       throttledOnChangeCenterZoom(nextCenter, zoom + 1);
     }
-  };
+  });
 
   useEffect(() => {
+    const container = containerRef.current;
+
     const handleMove = (e: MouseEvent) => mouseMoveRef.current(e);
     const handleUp = (e: MouseEvent) => mouseUpRef.current(e);
+    const handleWheel = (e: WheelEvent) => handleWheelRef.current(e);
 
     window.addEventListener('mousemove', handleMove);
     window.addEventListener('mouseup', handleUp);
+    container?.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
       window.removeEventListener('mousemove', handleMove);
       window.removeEventListener('mouseup', handleUp);
+      container?.removeEventListener('wheel', handleWheel);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -105,7 +110,6 @@ function Map(props: Props) {
       style={{ position: 'relative', overflow: 'hidden', ...style }}
       className={className}
       ref={containerRef}
-      onWheel={handleWheel}
       onMouseDown={handleMouseDown}
     >
       {width > 0 && height > 0 && (
