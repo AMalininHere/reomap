@@ -8,16 +8,6 @@ function osm(x: number, y: number, z: number) {
   return `https://${s}.tile.openstreetmap.org/${z}/${x}/${y}.png`
 }
 
-
-function ocm(x: number, y: number, z: number) {
-  const s = String.fromCharCode(97 + (x + y + z) % 3)
-  return `https://${s}.tile.thunderforest.com/cycle/${z}/${x}/${y}.png`
-}
-
-function wikimedia(x: number, y: number, z: number) {
-  return `https://maps.wikimedia.org/osm-intl/${z}/${x}/${y}.png`;
-}
-
 function App() {
   const [center, setCenter] = useState(new LatLng(55.417, 85.276));
   const [zoom, setZoom] = useState(6);
@@ -35,7 +25,7 @@ function App() {
           }
         }}
       >
-        <Tiles provider={wikimedia} />
+        <Tiles provider={osm} />
         <GeoJson data={data as GeoJSON.GeoJSON} />
       </Map>
       <div>
