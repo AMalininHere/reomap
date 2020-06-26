@@ -29,9 +29,8 @@ function App() {
         <GeoJson data={data as GeoJSON.GeoJSON} />
       </Map>
       <div>
-        <span>zoom: {zoom}</span>
-        <button onClick={() => setZoom(z => z + 1)}>+</button>
-        <button onClick={() => setZoom(z => z - 1)}>-</button>
+        <div>center: ({center.lat}, {center.lng})</div>
+        <div>zoom: {zoom}</div>
       </div>
     </div>
   );
