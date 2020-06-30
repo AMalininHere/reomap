@@ -1,0 +1,12 @@
+{
+  "name": "reomap",
+  "private": true,
+  "devDependencies": {
+    "@types/react": "^16.9.41",
+    "react": "^16.13.1",
+    "typescript": "^3.9.5"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
