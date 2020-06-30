@@ -2,6 +2,10 @@
   "name": "reomap",
   "private": true,
   "devDependencies": {
+    "@babel/cli": "^7.10.0",
+    "@babel/core": "^7.10.0",
+    "@babel/preset-react": "^7.10.0",
+    "@babel/preset-typescript": "^7.10.0",
     "@types/react": "^16.9.41",
     "react": "^16.13.1",
     "typescript": "^3.9.5"

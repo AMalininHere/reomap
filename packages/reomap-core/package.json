@@ -2,10 +2,11 @@
   "name": "@reomap/core",
   "version": "0.0.0",
   "scripts": {
+    "build": "babel ./src --config-file ../../babel.config.js --out-dir ./build --extensions .ts,.tsx",
     "typescript": "tsc -p tsconfig.build.json"
   },
   "peerDependencies": {
-    "react": "16.8.0"
+    "react": "^16.8.0"
   },
   "dependencies": {
     "@types/geojson": "^7946.0.7"
