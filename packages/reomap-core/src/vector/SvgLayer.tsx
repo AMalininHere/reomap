@@ -23,15 +23,14 @@ function SvgLayer(props: Props) {
 
   const offsetX = (lng2tile(center.lng, ctx.zoom) - lng2tile(ctx.center.lng, ctx.zoom)) * TILE_SIZE + ctx.width / 2;
   const offsetY = (lat2tile(center.lat, ctx.zoom) - lat2tile(ctx.center.lat, ctx.zoom)) * TILE_SIZE + ctx.height / 2;
+  const viewBoxValues = `${-offsetX} ${-offsetY} ${ctx.width} ${ctx.height}`;
 
   return (
     <Layer>
-      <svg width={ctx.width} height={ctx.height}>
-        <g transform={`translate(${offsetX}, ${offsetY})`}>
-          <MapProvider value={relativeContextData}>
-            {children}
-          </MapProvider>
-        </g>
+      <svg width={ctx.width} height={ctx.height} viewBox={viewBoxValues}>
+        <MapProvider value={relativeContextData}>
+          {children}
+        </MapProvider>
       </svg>
     </Layer>
   );
