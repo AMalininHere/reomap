@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { LatLng, Map, Tiles, GeoJson } from '@reomap/core';
 
 import data from './test.json';
-import { LatLng, Map, Tiles, GeoJson } from './core';
 
 function osm(x: number, y: number, z: number) {
   const s = String.fromCharCode(97 + (x + y + z) % 3)
