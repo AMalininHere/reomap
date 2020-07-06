@@ -14,7 +14,7 @@ interface Props {
 
 type PathProps = Omit<React.SVGAttributes<SVGPathElement>, 'fillRule' | 'd'>;
 
-function Polygon(props: Props, ref: Ref<SVGPathElement>) {
+function Polygon(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   const {
     positions,
     ...pathProps
