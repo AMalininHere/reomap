@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useMapContext, MapProvider, ContextData } from '../context';
+import { useMapContext, MapProvider, ContextState } from '../context';
 import Layer from '../Layer';
 import { LatLng } from '../models';
 import { TILE_SIZE } from '../common';
@@ -17,7 +17,7 @@ function SvgLayer(props: Props) {
     children,
   } = props;
   const relativeContextData = useMemo(
-    () => new ContextData(center, ctx.zoom, 0, 0),
+    () => new ContextState(center, ctx.zoom, 0, 0),
     [center, ctx.zoom]
   );
 

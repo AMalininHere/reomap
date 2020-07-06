@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { LatLng, Point } from './models';
 import { latLngToPixel, pixelToLatLng } from './common';
 
-export class ContextData {
+export class ContextState {
   constructor(
     public readonly center: LatLng,
     public readonly zoom: number,
@@ -17,7 +17,7 @@ export class ContextData {
     pixelToLatLng(this.width, this.height, this.zoom, this.center, source);
 }
 
-const ctx = React.createContext<ContextData>(null!);
+const ctx = React.createContext<ContextState>(null!);
 
 export const MapProvider = ctx.Provider;
 
