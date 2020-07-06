@@ -37,4 +37,4 @@ export function latLngToPixel(width: number, height: number, zoom: number, cente
     (tileX - tileCenterX) * TILE_SIZE + width / 2,
     (tileY - tileCenterY) * TILE_SIZE + height / 2
   );
-};
+}
