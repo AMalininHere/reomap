@@ -23,7 +23,7 @@ module.exports = (env, args) => {
     target: "web",
     mode,
     output: {
-      path: path.join(__dirname, 'dist'),
+      path: path.join(__dirname, 'build'),
       publicPath: '/',
       filename: (isProduction ? '[name].[contenthash:8].js' : '[name].js'),
     },
