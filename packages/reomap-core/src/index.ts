@@ -1,4 +1,5 @@
-export { LatLng } from './models';
+export { LatLng, Point } from './models';
+export { ContextData, MapProvider, useMapContext } from './context';
 export { default as Map } from './Map';
 export { default as Tiles } from './Tiles';
 export { default as Layer } from './Layer';
