@@ -15,10 +15,6 @@ function copyPackageJson(fromFile, toFile) {
   console.log('"package.json" was copied to "/build"');
 }
 
-function copyLicense(params) {
-
-}
-
 function main() {
   const cwd = process.cwd();
   const sourcePackageJsonPath = path.join(cwd, 'package.json');
