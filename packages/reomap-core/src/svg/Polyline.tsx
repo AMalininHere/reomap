@@ -1,5 +1,5 @@
 import React, { Ref } from 'react';
-import { useMapContext } from '../Context';
+import { useMapContext } from '../context';
 import { LatLng, Point } from '../models';
 
 function makeSvgPath(points: Point[]) {

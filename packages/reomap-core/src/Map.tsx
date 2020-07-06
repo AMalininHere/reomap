@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { Point, LatLng } from './models';
-import { MapProvider, ContextData } from './Context';
+import { MapProvider, ContextData } from './context';
 import { TILE_SIZE } from './common';
 import { useThrottleCallback, useSyncRef, useContainerWidthHeight } from './utils/hooks';
 

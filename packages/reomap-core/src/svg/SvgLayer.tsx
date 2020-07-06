@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useMapContext, MapProvider, ContextData } from '../Context';
+import { useMapContext, MapProvider, ContextData } from '../context';
 import Layer from '../Layer';
 import { LatLng } from '../models';
 import { TILE_SIZE } from '../common';
