@@ -13,7 +13,8 @@
     "noErrorTruncation": true,
     "baseUrl": "./",
     "paths": {
-      "@reomap/core": ["./packages/reomap-core/src"]
+      "@reomap/core": ["./packages/reomap-core/src"],
+      "@reomap/core/*": ["./packages/reomap-core/src/*"]
     }
   },
   "exclude": [
