@@ -36,7 +36,7 @@ function Polygon(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   };
 
   return (
-    <path ref={ref} {...pathPropsWitdhDefaults} fillRule="evenodd" d={pathString} />
+    <path ref={ref} fillRule="evenodd" d={pathString} {...pathPropsWitdhDefaults} />
   );
 }
 

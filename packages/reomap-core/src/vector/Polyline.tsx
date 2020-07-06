@@ -30,7 +30,7 @@ function Polyline(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   };
 
   return (
-    <path ref={ref} {...pathPropsWitdhDefaults} fill="none" d={pathString} />
+    <path ref={ref} fill="none" d={pathString} {...pathPropsWitdhDefaults} />
   );
 }
 
