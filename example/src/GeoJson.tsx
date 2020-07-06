@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import * as G from 'geojson';
-import { LatLng } from './models';
-import { SvgLayer, Circle, Polygon, Polyline } from './vector';
+import { LatLng } from '@reomap/core';
+import { SvgLayer, Circle, Polygon, Polyline } from '@reomap/core/vector';
 
 function positionToLatLng([lng, lat]: G.Position) {
   return new LatLng(lat, lng);

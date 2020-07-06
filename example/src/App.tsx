@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { LatLng, Map, Tiles, GeoJson } from '@reomap/core';
+import { LatLng, Map, Tiles } from '@reomap/core';
+import GeoJson from './GeoJson';
 
 import data from './test.json';
 

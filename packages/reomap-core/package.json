@@ -8,8 +8,6 @@
   "peerDependencies": {
     "react": "^16.8.0"
   },
-  "dependencies": {
-    "@types/geojson": "^7946.0.7"
-  },
+  "dependencies": {},
   "devDependencies": {}
 }
