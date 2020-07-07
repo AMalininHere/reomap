@@ -3,6 +3,7 @@ import { LatLng } from './models';
 import { lng2tile, lat2tile } from './utils/geo-fns';
 import { useMapContext } from './context';
 import { TILE_SIZE } from './common';
+import Tile from './Tile';
 
 function useTileValues(center: LatLng, zoom: number, width: number, height: number) {
   const tileCenterX = lng2tile(center.lng, zoom);
@@ -65,7 +66,7 @@ function Tiles(props: Props) {
   for (let x = xMin; x <= xMax; ++x) {
     for (let y = yMin; y <= yMax; ++y) {
       tiles.push(
-        <img
+        <Tile
           key={`${x}-${y}-${zoom}`}
           alt=""
           src={provider(x, y, zoom)}
