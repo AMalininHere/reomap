@@ -12,6 +12,7 @@ async function createPackageJson(fromFile, toFile) {
     scripts: undefined,
     typings: './index.d.ts',
     module: './esm5/index.js',
+    sideEffects: false,
   };
 
   await fse.writeFile(toFile, JSON.stringify(destPackageJson, null, 2));
@@ -23,7 +24,8 @@ async function createModulePackages(buildDir, dirs) {
   await Promise.all(dirs.map(async dir => {
     const packageData = {
       typings: './index.d.ts',
-      module: path.join('..', 'esm5', dir, 'index.js')
+      module: path.join('..', 'esm5', dir, 'index.js'),
+      sideEffects: false,
     };
 
     await fse.writeFile(path.join(cwd, buildDir, dir, 'package.json'), JSON.stringify(packageData, null, 2));
