@@ -38,7 +38,7 @@ interface Props {
   className?: string;
 }
 
-function Tiles(props: Props) {
+function TileLayer(props: Props) {
   const mapContext = useMapContext();
   const zoom = mapContext.zoom;
   const width = mapContext.width;
@@ -102,4 +102,4 @@ function Tiles(props: Props) {
   );
 }
 
-export default Tiles;
+export default TileLayer;

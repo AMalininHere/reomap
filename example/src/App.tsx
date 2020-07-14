@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LatLng, Map, Tiles } from '@reomap/core';
+import { LatLng, Map, TileLayer } from '@reomap/core';
 import GeoJson from './GeoJson';
 
 import data from './test.json';
@@ -26,7 +26,7 @@ function App() {
           }
         }}
       >
-        <Tiles provider={osm} />
+        <TileLayer provider={osm} />
         <GeoJson data={data as GeoJSON.GeoJSON} />
       </Map>
       <div>
