@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "yarn build:babel && yarn build:types && yarn build:copy",
-    "build:babel": "babel ./src --config-file ../../babel.config.js --out-dir ./build --extensions .ts,.tsx",
+    "build": "yarn build:esm5 && yarn build:types && yarn build:copy",
+    "build:esm5": "babel ./src --config-file ../../babel.config.js --out-dir ./build/esm5 --extensions .ts,.tsx",
     "build:types": "tsc -p tsconfig.build.json",
     "build:copy": "node ../../scripts/copy-files.js",
     "prebuild": "rimraf build"
