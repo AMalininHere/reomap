@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
-import { LatLng, Point } from './models';
-import { latLngToPixel, pixelToLatLng } from './common';
+import { LatLng, Point, latLngToPixel, pixelToLatLng } from './common';
 
 export class ContextState {
   constructor(

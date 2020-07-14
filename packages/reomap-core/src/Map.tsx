@@ -1,8 +1,7 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
-import { Point, LatLng } from './models';
 import { MapProvider, ContextState } from './context';
-import { TILE_SIZE } from './common';
+import { TILE_SIZE, Point, LatLng } from './common';
 import { useThrottleCallback, useSyncRef, useContainerWidthHeight } from './utils/hooks';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent | MouseEvent) {

@@ -1,6 +1,6 @@
 import React, { Ref } from 'react';
 import { useMapContext } from '../context';
-import { LatLng } from '../models';
+import { LatLng } from '../common';
 
 export interface Props {
   center: LatLng;

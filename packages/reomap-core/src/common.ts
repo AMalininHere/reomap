@@ -1,5 +1,25 @@
 import { tile2lat, tile2lng, lng2tile, lat2tile } from './utils/geo-fns';
-import { LatLng, Point } from './models';
+
+export class LatLng {
+  constructor(
+    public readonly lat: number,
+    public readonly lng: number,
+  ) { }
+
+  equals(other: LatLng) {
+    return (
+      this.lat === other.lat &&
+      this.lng === other.lng
+    );
+  }
+}
+
+export class Point {
+  constructor(
+    public readonly x: number,
+    public readonly y: number,
+  ) { }
+}
 
 export const TILE_SIZE = 256;
 

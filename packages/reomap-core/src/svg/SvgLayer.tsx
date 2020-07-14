@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { useMapContext, MapProvider, ContextState } from '../context';
 import Layer from '../Layer';
-import { LatLng } from '../models';
-import { TILE_SIZE } from '../common';
+import { TILE_SIZE, LatLng } from '../common';
 import { lng2tile, lat2tile } from '../utils/geo-fns';
 
 interface Props {

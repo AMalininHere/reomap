@@ -1,8 +1,7 @@
 import React from 'react';
-import { LatLng } from './models';
 import { lng2tile, lat2tile } from './utils/geo-fns';
 import { useMapContext } from './context';
-import { TILE_SIZE } from './common';
+import { TILE_SIZE, LatLng } from './common';
 import Tile from './Tile';
 
 function useTileValues(center: LatLng, zoom: number, width: number, height: number) {
