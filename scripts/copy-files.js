@@ -1,25 +1,28 @@
-const fs = require('fs');
+const fse = require('fs-extra');
 const path = require('path');
 
-function copyPackageJson(fromFile, toFile) {
-  const sourcePackageJson = JSON.parse(fs.readFileSync(fromFile).toString());
+const cwd = process.cwd();
+
+async function copyPackageJson(fromFile, toFile) {
+  const packageJsonData = await fse.readFile(fromFile, 'utf8');
+  const sourcePackageJson = JSON.parse(packageJsonData);
 
   const destPackageJson = {
     ...sourcePackageJson,
   };
 
   destPackageJson.scripts = undefined;
+  destPackageJson.typings = './index.d.ts';
 
-  fs.writeFileSync(toFile, JSON.stringify(destPackageJson, null, 2));
+  await fse.writeFile(toFile, JSON.stringify(destPackageJson, null, 2));
 
   console.log('"package.json" was copied to "/build"');
 }
 
-function main() {
-  const cwd = process.cwd();
+async function main() {
   const sourcePackageJsonPath = path.join(cwd, 'package.json');
   const destPackageJsonPath = path.join(cwd, 'build', 'package.json');
-  copyPackageJson(sourcePackageJsonPath, destPackageJsonPath);
+  await copyPackageJson(sourcePackageJsonPath, destPackageJsonPath);
 }
 
-main();
+main().catch(err => console.error(err));
