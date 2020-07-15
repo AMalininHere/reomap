@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useLayoutEffect, useState } from 'react';
+import ResizeObserver from 'resize-observer-polyfill';
 
 export function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms: number) {
   const activeThrottling = useRef<number>(0);
@@ -39,8 +40,10 @@ export function useContainerWidthHeight(containerRef: React.RefObject<HTMLElemen
   const [ widthHeight, setWidthHeight ] = useState<[ number, number ]>([0, 0]);
 
   useEffect(() => {
+    const element = containerRef.current!;
+
     const updateSize = () => {
-      const rect = containerRef.current!.getBoundingClientRect();
+      const rect = element.getBoundingClientRect();
       setWidthHeight(widthHeight => {
         if (widthHeight[0] === rect.width && widthHeight[1] === rect.height) {
           return widthHeight;
@@ -51,10 +54,12 @@ export function useContainerWidthHeight(containerRef: React.RefObject<HTMLElemen
 
     updateSize();
 
-    window.addEventListener('resize', updateSize);
+    const observer = new ResizeObserver(updateSize);
+
+    observer.observe(element);
 
     return () => {
-      window.removeEventListener('resize', updateSize);
+      observer.disconnect();
     };
 
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
