@@ -1,10 +1,13 @@
 import { tile2lat, tile2lng, lng2tile, lat2tile } from './utils/geo-fns';
 
 export class LatLng {
-  constructor(
-    public readonly lat: number,
-    public readonly lng: number,
-  ) { }
+  public readonly lat: number;
+  public readonly lng: number;
+
+  constructor(lat: number, lng: number) {
+    this.lat = lat;
+    this.lng = lng;
+  }
 
   equals(other: LatLng) {
     return (
@@ -15,10 +18,13 @@ export class LatLng {
 }
 
 export class Point {
-  constructor(
-    public readonly x: number,
-    public readonly y: number,
-  ) { }
+  public readonly x: number;
+  public readonly y: number;
+
+  constructor(x: number, y: number,) {
+    this.x = x;
+    this.y = y;
+  }
 }
 
 export const TILE_SIZE = 256;
