@@ -11,7 +11,6 @@ async function createPackageJson(fromFile, toFile) {
     ...sourcePackageJson,
     scripts: undefined,
     typings: './index.d.ts',
-    module: './esm5/index.js',
     sideEffects: false,
   };
 
@@ -20,23 +19,10 @@ async function createPackageJson(fromFile, toFile) {
   console.log('"package.json" was copied to "/build"');
 }
 
-async function createModulePackages(buildDir, dirs) {
-  await Promise.all(dirs.map(async dir => {
-    const packageData = {
-      typings: './index.d.ts',
-      module: path.join('..', 'esm5', dir, 'index.js'),
-      sideEffects: false,
-    };
-
-    await fse.writeFile(path.join(cwd, buildDir, dir, 'package.json'), JSON.stringify(packageData, null, 2));
-  }));
-}
-
 async function main() {
   const sourcePackageJsonPath = path.join(cwd, 'package.json');
   const destPackageJsonPath = path.join(cwd, 'build', 'package.json');
   await createPackageJson(sourcePackageJsonPath, destPackageJsonPath);
-  await createModulePackages('build', [ 'svg' ])
 }
 
 main().catch(err => console.error(err));
