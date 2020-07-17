@@ -1,0 +1,31 @@
+name: Publish
+on:
+  push:
+    tags: [ '*' ]
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+    - run: yarn install
+    - run: |
+        cd ./packages/reomap-core
+        yarn build
+    - env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+        echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+    - name: Get version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+    - name: Publish package
+      run: |
+        cd ./packages/reomap-core/build
+        yarn version --no-git-tag-version --new-version ${{ steps.get_version.outputs.VERSION }}
+        yarn publish --no-git-tag-version --no-commit-hooks --non-interactive --access public --new-version "${{ steps.get_version.outputs.VERSION }}"
