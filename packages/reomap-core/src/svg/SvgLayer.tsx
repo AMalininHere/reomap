@@ -22,7 +22,7 @@ function SvgLayer(props: Props) {
 
   const offsetX = (lng2tile(center.lng, ctx.zoom) - lng2tile(ctx.center.lng, ctx.zoom)) * TILE_SIZE + ctx.width / 2;
   const offsetY = (lat2tile(center.lat, ctx.zoom) - lat2tile(ctx.center.lat, ctx.zoom)) * TILE_SIZE + ctx.height / 2;
-  const viewBoxValues = `${-offsetX} ${-offsetY} ${ctx.width} ${ctx.height}`;
+  const viewBoxValues = `${-Math.round(offsetX)} ${-Math.round(offsetY)} ${ctx.width} ${ctx.height}`;
 
   return (
     <Layer>

@@ -4,7 +4,7 @@ import { LatLng, Point } from '../common';
 
 function makeSvgPath(points: Point[]) {
   return points
-    .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
+    .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${Math.round(p.x)} ${Math.round(p.y)}`)
     .join(' ');
 }
 

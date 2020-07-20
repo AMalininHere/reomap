@@ -25,7 +25,7 @@ function Circle(props: Props & CirlceProps, ref: Ref<SVGCircleElement>) {
   }
 
   return (
-    <circle ref={ref} cx={point.x} cy={point.y} r={radius} {...circlePropsWidthDefaults} />
+    <circle ref={ref} cx={Math.round(point.x)} cy={Math.round(point.y)} r={radius} {...circlePropsWidthDefaults} />
   );
 }
 
