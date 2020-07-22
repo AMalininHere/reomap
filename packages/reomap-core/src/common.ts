@@ -1,20 +1,15 @@
 import { tile2lat, tile2lng, lng2tile, lat2tile } from './utils/geo-fns';
 
-export class LatLng {
-  public readonly lat: number;
-  public readonly lng: number;
+export interface LatLng {
+  readonly lat: number;
+  readonly lng: number;
+}
 
-  constructor(lat: number, lng: number) {
-    this.lat = lat;
-    this.lng = lng;
-  }
-
-  equals(other: LatLng) {
-    return (
-      this.lat === other.lat &&
-      this.lng === other.lng
-    );
-  }
+export function latLng(lat: number, lng: number): LatLng {
+  return {
+    lat,
+    lng
+  };
 }
 
 export class Point {
@@ -29,12 +24,12 @@ export class Point {
 
 export const TILE_SIZE = 256;
 
-export const absMinLatLng = new LatLng(
+export const absMinLatLng = latLng(
   tile2lat(Math.pow(2, 10), 10),
   tile2lng(0, 10)
 );
 
-export const absMaxLatLng = new LatLng(
+export const absMaxLatLng = latLng(
   tile2lat(0, 10),
   tile2lng(Math.pow(2, 10), 10)
 );
@@ -46,7 +41,7 @@ export function pixelToLatLng(width: number, height: number, zoom: number, cente
   const tileX = lng2tile(center.lng, zoom) + pointDiffX;
   const tileY = lat2tile(center.lat, zoom) + pointDiffY;
 
-  return new LatLng(
+  return latLng(
     Math.max(absMinLatLng.lat, Math.min(absMaxLatLng.lat, tile2lat(tileY, zoom))),
     Math.max(absMinLatLng.lng, Math.min(absMaxLatLng.lng, tile2lng(tileX, zoom)))
   );

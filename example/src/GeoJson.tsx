@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import * as G from 'geojson';
-import { LatLng } from '@reomap/core';
+import { latLng, LatLng } from '@reomap/core';
 import { SvgLayer, Circle, Polygon, Polyline } from '@reomap/core/svg';
 
 function positionToLatLng([lng, lat]: G.Position) {
-  return new LatLng(lat, lng);
+  return latLng(lat, lng);
 }
 
 function* lazyMap<T, R>(iterable: Iterable<T>, fn: (value: T, index: number) => R) {
@@ -53,7 +53,7 @@ function findContolPoint(coords: Iterable<LatLng>) {
     minLng = Math.min(minLng, ll.lng);
   }
 
-  return new LatLng(maxLat, minLng);
+  return latLng(maxLat, minLng);
 }
 
 interface Props {

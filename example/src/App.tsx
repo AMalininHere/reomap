@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LatLng, Map, TileLayer } from '@reomap/core';
+import { latLng, Map, TileLayer } from '@reomap/core';
 import GeoJson from './GeoJson';
 
 import data from './test.json';
@@ -10,7 +10,7 @@ function osm(x: number, y: number, z: number) {
 }
 
 function App() {
-  const [center, setCenter] = useState(new LatLng(55.417, 85.276));
+  const [center, setCenter] = useState(latLng(55.417, 85.276));
   const [zoom, setZoom] = useState(6);
 
   return (
