@@ -12,14 +12,13 @@ export function latLng(lat: number, lng: number): LatLng {
   };
 }
 
-export class Point {
-  public readonly x: number;
-  public readonly y: number;
+export interface Point {
+  readonly x: number;
+  readonly y: number;
+}
 
-  constructor(x: number, y: number,) {
-    this.x = x;
-    this.y = y;
-  }
+export function point(x: number, y: number) {
+  return { x, y };
 }
 
 export const TILE_SIZE = 256;
@@ -54,7 +53,7 @@ export function latLngToPixel(width: number, height: number, zoom: number, cente
   const tileX = lng2tile(source.lng, zoom);
   const tileY = lat2tile(source.lat, zoom);
 
-  return new Point(
+  return point(
     (tileX - tileCenterX) * TILE_SIZE + width / 2,
     (tileY - tileCenterY) * TILE_SIZE + height / 2
   );
