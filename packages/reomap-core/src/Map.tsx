@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
-import { MapProvider, ContextState } from './context';
+import { MapProvider, createContextState } from './context';
 import { TILE_SIZE, point, LatLng, latLng } from './common';
 import { useThrottleCallback, useSyncRef, useContainerWidthHeight } from './utils/hooks';
 
@@ -35,7 +35,7 @@ function Map(props: Props) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, height] = useContainerWidthHeight(containerRef);
-  const mapContextData = new ContextState(center, zoom, width, height);
+  const mapContextData = createContextState(center, zoom, width, height);
 
   const moveStartedRef = useRef(false);
   const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);

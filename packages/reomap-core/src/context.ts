@@ -1,29 +1,25 @@
 import React, { useContext } from 'react';
 import { LatLng, Point, latLngToPixel, pixelToLatLng } from './common';
 
-export class ContextState {
-  public readonly center: LatLng;
-  public readonly zoom: number;
-  public readonly width: number;
-  public readonly height: number;
+export interface ContextState {
+  readonly center: LatLng;
+  readonly zoom: number;
+  readonly width: number;
+  readonly height: number;
 
-  constructor(
-    center: LatLng,
-    zoom: number,
-    width: number,
-    height: number,
-  ) {
-    this.center = center;
-    this.zoom = zoom;
-    this.width = width;
-    this.height = height;
-  }
+  latLngToPixel(source: LatLng): Point;
+  pixelToLatLng(source: Point): LatLng;
+}
 
-  public readonly latLngToPixel = (source: LatLng) =>
-    latLngToPixel(this.width, this.height, this.zoom, this.center, source);
-
-  public readonly pixelToLatLng = (source: Point) =>
-    pixelToLatLng(this.width, this.height, this.zoom, this.center, source);
+export function createContextState(center: LatLng, zoom: number, width: number, height: number) {
+  return {
+    center,
+    zoom,
+    width,
+    height,
+    latLngToPixel: (source: LatLng) => latLngToPixel(width, height, zoom, center, source),
+    pixelToLatLng: (source: Point) => pixelToLatLng(width, height, zoom, center, source),
+  };
 }
 
 const ctx = React.createContext<ContextState>(null!);
