@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "description": "Simple library to render maps using pure React",
+  "author": {
+    "name": "Alexey Malinin",
+    "email": "amalininhere@gmail.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/AMalininHere/reomap.git",
