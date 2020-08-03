@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { MapProvider, createContextState } from './context';
-import { TILE_SIZE, point, LatLng, latLng } from './common';
+import { TILE_SIZE, LatLng, point, latLng, latLngToPixel, pixelToLatLng } from './common';
 import { useThrottleCallback, useSyncRef, useContainerWidthHeight } from './utils/hooks';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent | MouseEvent) {
@@ -19,7 +19,13 @@ export interface Props {
   zoom: number;
   center: LatLng;
   onChangeCenterZoom?: (center: LatLng, zoom: number) => any;
+  getZoomDelta?: (wheelDelta: number) => number;
+
   children: React.ReactNode | React.ReactNode[]
+}
+
+function defaultGetZoomDelta(wheelDelta: number) {
+  return -Math.sign(wheelDelta);
 }
 
 function noop() { }
@@ -31,6 +37,7 @@ function Map(props: Props) {
     zoom,
     center,
     onChangeCenterZoom = noop,
+    getZoomDelta = defaultGetZoomDelta,
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -69,21 +76,18 @@ function Map(props: Props) {
   const handleWheelRef = useSyncRef((e: WheelEvent) => {
     e.preventDefault();
     const mouseLatLng = mapContextData.pixelToLatLng(getMousePoint(containerRef.current!, e));
-    const diffLat = (mouseLatLng.lat - center.lat);
-    const diffLng = (mouseLatLng.lng - center.lng);
-    if (e.deltaY > 0) {
-      const nextCenter = latLng(
-        (center.lat - diffLat),
-        (center.lng - diffLng)
-      );
-      throttledOnChangeCenterZoom(nextCenter, zoom - 1);
-    } else {
-      const nextCenter = latLng(
-        (center.lat + diffLat / 2),
-        (center.lng + diffLng / 2)
-      );
-      throttledOnChangeCenterZoom(nextCenter, zoom + 1);
-    }
+
+    const newZoom = mapContextData.zoom + getZoomDelta(e.deltaY);
+
+    const pixelBefore = latLngToPixel(width, height, zoom, center, mouseLatLng);
+    const pixelAfter = latLngToPixel(width, height, newZoom, center, mouseLatLng);
+
+    const newCenter = pixelToLatLng(width, height, newZoom, center, point(
+      width / 2 + pixelAfter.x - pixelBefore.x,
+      height / 2 + pixelAfter.y - pixelBefore.y
+    ));
+
+    throttledOnChangeCenterZoom(newCenter, newZoom);
   });
 
   useEffect(() => {
