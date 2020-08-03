@@ -1,15 +1,30 @@
 import React from 'react';
 import { lng2tile, lat2tile } from './utils/geo-fns';
 import { useMapContext } from './context';
-import { TILE_SIZE, LatLng } from './common';
+import { TILE_SIZE } from './common';
 import Tile from './Tile';
 
-function useTileValues(center: LatLng, zoom: number, width: number, height: number) {
-  const tileCenterX = lng2tile(center.lng, zoom);
-  const tileCenterY = lat2tile(center.lat, zoom);
+function useTileValues() {
+  const {
+    center,
+    zoom,
+    width,
+    height,
+  } = useMapContext();
 
-  const halfWidth = width / 2 / TILE_SIZE;
-  const halfHeight = height / 2 / TILE_SIZE;
+
+  const roundedZoom = Math.round(zoom);
+  const zoomDiff = zoom - roundedZoom;
+
+  const scale = Math.pow(2, zoomDiff);
+  const scaleWidth = width / scale;
+  const scaleHeight = height / scale;
+
+  const tileCenterX = lng2tile(center.lng, roundedZoom);
+  const tileCenterY = lat2tile(center.lat, roundedZoom);
+
+  const halfWidth = scaleWidth / 2 / TILE_SIZE;
+  const halfHeight = scaleHeight / 2 / TILE_SIZE;
 
   const tileMinX = Math.floor(tileCenterX - halfWidth);
   const tileMaxX = Math.floor(tileCenterX + halfWidth);
@@ -26,6 +41,12 @@ function useTileValues(center: LatLng, zoom: number, width: number, height: numb
 
     tileMinY,
     tileMaxY,
+
+    roundedZoom,
+
+    scale,
+    scaleWidth,
+    scaleHeight,
   };
 }
 
@@ -38,11 +59,6 @@ interface Props {
 }
 
 function TileLayer(props: Props) {
-  const mapContext = useMapContext();
-  const zoom = mapContext.zoom;
-  const width = mapContext.width;
-  const height = mapContext.height;
-
   const {
     tileCenterX,
     tileCenterY,
@@ -52,12 +68,18 @@ function TileLayer(props: Props) {
 
     tileMinY,
     tileMaxY,
-  } = useTileValues(mapContext.center, zoom,  width, height);
+
+    roundedZoom,
+
+    scale,
+    scaleWidth,
+    scaleHeight,
+  } = useTileValues();
 
   const xMin = Math.max(tileMinX, 0);
   const yMin = Math.max(tileMinY, 0);
-  const xMax = Math.min(tileMaxX, Math.pow(2, zoom) - 1);
-  const yMax = Math.min(tileMaxY, Math.pow(2, zoom) - 1);
+  const xMax = Math.min(tileMaxX, Math.pow(2, roundedZoom) - 1);
+  const yMax = Math.min(tileMaxY, Math.pow(2, roundedZoom) - 1);
 
   const { provider, tileClassName, className } = props;
   const tiles: React.ReactNode[] = [];
@@ -66,9 +88,9 @@ function TileLayer(props: Props) {
     for (let y = yMin; y <= yMax; ++y) {
       tiles.push(
         <Tile
-          key={`${x}-${y}-${zoom}`}
+          key={`${x}-${y}-${roundedZoom}`}
           alt=""
-          src={provider(x, y, zoom)}
+          src={provider(x, y, roundedZoom)}
           loading="lazy"
           className={tileClassName}
           style={{
@@ -83,15 +105,16 @@ function TileLayer(props: Props) {
     }
   }
 
-  const left = -((tileCenterX - tileMinX) * TILE_SIZE - width / 2);
-  const top = -((tileCenterY - tileMinY) * TILE_SIZE - height / 2);
+  const left = -((tileCenterX - tileMinX) * TILE_SIZE - scaleWidth / 2);
+  const top = -((tileCenterY - tileMinY) * TILE_SIZE - scaleHeight / 2);
 
   const tilesStyle: React.CSSProperties = {
     position: 'absolute',
     width: (tileMaxX - tileMinX + 1) * TILE_SIZE,
     height: (tileMaxY - tileMinY + 1) * TILE_SIZE,
     willChange: 'transform',
-    transform: `translate(${left}px, ${top}px)`,
+    transform: `translate(${left * scale}px, ${top * scale}px) scale(${scale})`,
+    transformOrigin: 'top left',
   };
 
   return (
