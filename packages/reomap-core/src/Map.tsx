@@ -19,7 +19,13 @@ export interface Props {
   zoom: number;
   center: LatLng;
   onChangeCenterZoom?: (center: LatLng, zoom: number) => any;
+  getZoomDelta?: (wheelDelta: number) => number;
+
   children: React.ReactNode | React.ReactNode[]
+}
+
+function defaultGetZoomDelta(wheelDelta: number) {
+  return -Math.sign(wheelDelta);
 }
 
 function noop() { }
@@ -31,6 +37,7 @@ function Map(props: Props) {
     zoom,
     center,
     onChangeCenterZoom = noop,
+    getZoomDelta = defaultGetZoomDelta,
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -70,13 +77,7 @@ function Map(props: Props) {
     e.preventDefault();
     const mouseLatLng = mapContextData.pixelToLatLng(getMousePoint(containerRef.current!, e));
 
-    let newZoom = mapContextData.zoom;
-
-    if (e.deltaY > 0) {
-      newZoom = newZoom - 1;
-    } else {
-      newZoom = newZoom + 1;
-    }
+    const newZoom = mapContextData.zoom + getZoomDelta(e.deltaY);
 
     const pixelBefore = latLngToPixel(width, height, zoom, center, mouseLatLng);
     const pixelAfter = latLngToPixel(width, height, newZoom, center, mouseLatLng);
