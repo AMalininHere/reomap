@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useLayoutEffect, useState } from 'react';
+import { useEffect, useRef, useCallback, useLayoutEffect, useState, useMemo } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
 export function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms: number) {
@@ -66,3 +66,33 @@ export function useContainerWidthHeight(containerRef: React.RefObject<HTMLElemen
 
   return widthHeight;
 }
+
+
+type RefProp<T> =
+  | React.MutableRefObject<T | null>
+  | ((instance: T | null) => void)
+  | null;
+
+function setRef<T>(
+  ref: RefProp<T>,
+  value: T | null,
+) {
+  if (typeof ref === 'function') {
+    ref(value);
+  } else if (ref) {
+    ref.current = value;
+  }
+}
+
+export function useForkRef<T>(refA: RefProp<T>, refB: RefProp<T>) {
+  return useMemo(() => {
+    if (refA == null && refB == null) {
+      return null;
+    }
+    return (refValue: T | null) => {
+      setRef(refA, refValue);
+      setRef(refB, refValue);
+    };
+  }, [refA, refB]);
+}
+

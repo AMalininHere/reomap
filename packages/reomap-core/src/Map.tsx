@@ -1,8 +1,8 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, Ref } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { MapProvider, createContextState } from './context';
 import { TILE_SIZE, LatLng, point, latLng, latLngToPixel, pixelToLatLng } from './common';
-import { useThrottleCallback, useSyncRef, useContainerWidthHeight } from './utils/hooks';
+import { useThrottleCallback, useSyncRef, useContainerWidthHeight, useForkRef } from './utils/hooks';
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent | MouseEvent) {
   const elementRect = domElement.getBoundingClientRect();
@@ -30,7 +30,7 @@ function defaultGetZoomDelta(wheelDelta: number) {
 
 function noop() { }
 
-function Map(props: Props) {
+function Map(props: Props, publicRef: Ref<HTMLDivElement>) {
   const {
     style,
     className,
@@ -40,12 +40,13 @@ function Map(props: Props) {
     getZoomDelta = defaultGetZoomDelta,
   } = props;
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [width, height] = useContainerWidthHeight(containerRef);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [width, height] = useContainerWidthHeight(innerRef);
+
   const mapContextData = createContextState(center, zoom, width, height);
+  const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
 
   const moveStartedRef = useRef(false);
-  const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) {
@@ -75,8 +76,8 @@ function Map(props: Props) {
 
   const handleWheelRef = useSyncRef((e: WheelEvent) => {
     e.preventDefault();
-    const mouseLatLng = mapContextData.pixelToLatLng(getMousePoint(containerRef.current!, e));
 
+    const mouseLatLng = mapContextData.pixelToLatLng(getMousePoint(innerRef.current!, e));
     const newZoom = mapContextData.zoom + getZoomDelta(e.deltaY);
 
     const pixelBefore = latLngToPixel(width, height, zoom, center, mouseLatLng);
@@ -91,7 +92,7 @@ function Map(props: Props) {
   });
 
   useEffect(() => {
-    const container = containerRef.current;
+    const container = innerRef.current;
 
     const handleMove = (e: MouseEvent) => mouseMoveRef.current(e);
     const handleUp = (e: MouseEvent) => mouseUpRef.current(e);
@@ -108,11 +109,13 @@ function Map(props: Props) {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const elementRef = useForkRef(innerRef, publicRef);
+
   return (
     <div
       style={{ position: 'relative', overflow: 'hidden', ...style }}
       className={className}
-      ref={containerRef}
+      ref={elementRef}
       onMouseDown={handleMouseDown}
     >
       {width > 0 && height > 0 && (
@@ -124,4 +127,4 @@ function Map(props: Props) {
   );
 }
 
-export default Map;
+export default React.forwardRef(Map);
