@@ -32,7 +32,7 @@ function makeSvgPath(points: Point[]) {
 
 }
 
-export interface Props {
+interface Props {
   positions: LatLng[];
 }
 

@@ -2,7 +2,7 @@ import React, { Ref } from 'react';
 import { useMapContext } from '../context';
 import { LatLng } from '../common';
 
-export interface Props {
+interface Props {
   center: LatLng;
   radius: number;
 }
