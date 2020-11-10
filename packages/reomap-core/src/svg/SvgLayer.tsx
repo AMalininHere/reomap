@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 import { useMapContext, MapProvider, createContextState } from '../context';
 import Layer from '../Layer';
 import { TILE_SIZE, LatLng } from '../common';
@@ -6,10 +6,9 @@ import { lng2tile, lat2tile } from '../utils/geo-fns';
 
 interface Props {
   center?: LatLng;
-  children: React.ReactNode | React.ReactNode[];
 }
 
-function SvgLayer(props: Props) {
+function SvgLayer(props: PropsWithChildren<Props>) {
   const ctx = useMapContext();
   const {
     center = ctx.center,

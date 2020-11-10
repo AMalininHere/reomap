@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, Ref } from 'react';
+import React, { useRef, useCallback, useEffect, Ref, PropsWithChildren } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { MapProvider, createContextState } from './context';
 import { TILE_SIZE, LatLng, point, latLng, latLngToPixel, pixelToLatLng } from './common';
@@ -21,7 +21,7 @@ export interface Props {
   onChangeCenterZoom?: (center: LatLng, zoom: number) => any;
   getZoomDelta?: (wheelDelta: number) => number;
 
-  children: React.ReactNode | React.ReactNode[]
+  children?: React.ReactNode;
 }
 
 function defaultGetZoomDelta(wheelDelta: number) {
