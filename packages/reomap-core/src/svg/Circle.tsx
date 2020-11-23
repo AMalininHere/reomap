@@ -7,7 +7,7 @@ interface Props {
   radius: number;
 }
 
-type CirlceProps = Omit<React.SVGAttributes<SVGCircleElement>, 'cx' | 'cy' | 'r'>;
+type CirlceProps = Omit<React.SVGProps<SVGCircleElement>, 'cx' | 'cy' | 'r'>;
 
 function Circle(props: Props & CirlceProps, ref: Ref<SVGCircleElement>) {
   const {

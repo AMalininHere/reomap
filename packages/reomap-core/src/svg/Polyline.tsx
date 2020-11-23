@@ -36,7 +36,7 @@ interface Props {
   positions: LatLng[];
 }
 
-type PathProps = Omit<React.SVGAttributes<SVGPathElement>, 'fill' | 'd'>;
+type PathProps = Omit<React.SVGProps<SVGPathElement>, 'fill' | 'd'>;
 
 function Polyline(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   const {

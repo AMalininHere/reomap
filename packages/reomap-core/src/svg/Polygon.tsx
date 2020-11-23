@@ -12,7 +12,7 @@ interface Props {
   positions: LatLng[][];
 }
 
-type PathProps = Omit<React.SVGAttributes<SVGPathElement>, 'fillRule' | 'd'>;
+type PathProps = Omit<React.SVGProps<SVGPathElement>, 'fillRule' | 'd'>;
 
 function Polygon(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   const {
