@@ -49,14 +49,14 @@ const Polyline = memo(forwardRef<SVGPathElement, Props>(function Polyline(props,
 
   const pathString = makeSvgPath(positions.map(mapContext.latLngToPixel));
 
-  const pathPropsWitdhDefaults: PathProps = {
-    stroke: '#555555',
-    strokeWidth: 2,
-    ...pathProps
-  };
-
   return (
-    <path ref={ref} fill="none" d={pathString} {...pathPropsWitdhDefaults} />
+    <path
+      stroke="#555555"
+      strokeWidth={2}
+      {...pathProps}
+      ref={ref}
+      fill="none" d={pathString}
+    />
   );
 }));
 

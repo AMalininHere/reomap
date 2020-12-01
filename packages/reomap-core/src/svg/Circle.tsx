@@ -21,13 +21,13 @@ const Circle = memo(forwardRef<SVGCircleElement, Props>(function Circle(props, r
 
   const point = mapContext.latLngToPixel(center);
 
-  const circlePropsWidthDefaults: CirlceProps = {
-    fill: '#555555',
-    ...circleProps
-  }
-
   return (
-    <circle ref={ref} cx={Math.round(point.x)} cy={Math.round(point.y)} r={radius} {...circlePropsWidthDefaults} />
+    <circle
+      fill="#555555"
+      {...circleProps}
+      ref={ref}
+      cx={Math.round(point.x)} cy={Math.round(point.y)} r={radius}
+    />
   );
 }));
 

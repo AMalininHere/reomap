@@ -29,16 +29,16 @@ const Polygon = memo(forwardRef<SVGPathElement, Props>(function Polygon(props, r
     .map(makeSvgPath)
     .join(' ');
 
-  const pathPropsWitdhDefaults: PathProps = {
-    strokeWidth: 2,
-    stroke: '#555555',
-    fill: '#555555',
-    fillOpacity: 0.5,
-    ...pathProps
-  };
-
   return (
-    <path ref={ref} fillRule="evenodd" d={pathString} {...pathPropsWitdhDefaults} />
+    <path
+      strokeWidth={2}
+      stroke="#555555"
+      fill="#555555"
+      fillOpacity={0.5}
+      {...pathProps}
+      ref={ref}
+      fillRule="evenodd" d={pathString}
+    />
   );
 }));
 
