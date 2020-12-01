@@ -1,4 +1,4 @@
-import React, { forwardRef, memo } from 'react';
+import React, { ComponentType, forwardRef, memo, RefAttributes } from 'react';
 import { useMapContext } from '../context';
 import { LatLng, Point } from '../common';
 
@@ -14,9 +14,9 @@ type GeoProps = {
 
 type PathProps = Omit<React.SVGProps<SVGPathElement>, 'fillRule' | 'd' | 'ref'>;
 
-type Props = PathProps & GeoProps;
+export type Props = PathProps & GeoProps & RefAttributes<SVGPathElement>;
 
-const Polygon = memo(forwardRef<SVGPathElement, Props>(function Polygon(props, ref) {
+const Polygon = memo(forwardRef<SVGPathElement, PathProps & GeoProps>(function Polygon(props, ref) {
   const {
     positions,
     ...pathProps
@@ -40,6 +40,6 @@ const Polygon = memo(forwardRef<SVGPathElement, Props>(function Polygon(props, r
       fillRule="evenodd" d={pathString}
     />
   );
-}));
+})) as ComponentType<Props>;
 
 export default Polygon;
