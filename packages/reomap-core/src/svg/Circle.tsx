@@ -1,15 +1,17 @@
-import React, { Ref } from 'react';
+import React, { forwardRef, memo } from 'react';
 import { useMapContext } from '../context';
 import { LatLng } from '../common';
 
-interface Props {
+type GeoProps = {
   center: LatLng;
   radius: number;
-}
+};
 
-type CirlceProps = Omit<React.SVGProps<SVGCircleElement>, 'cx' | 'cy' | 'r'>;
+type CirlceProps = Omit<React.SVGProps<SVGCircleElement>, 'cx' | 'cy' | 'r' | 'ref'>;
 
-function Circle(props: Props & CirlceProps, ref: Ref<SVGCircleElement>) {
+type Props = CirlceProps & GeoProps;
+
+const Circle = memo(forwardRef<SVGCircleElement, Props>(function Circle(props, ref) {
   const {
     center,
     radius,
@@ -27,6 +29,6 @@ function Circle(props: Props & CirlceProps, ref: Ref<SVGCircleElement>) {
   return (
     <circle ref={ref} cx={Math.round(point.x)} cy={Math.round(point.y)} r={radius} {...circlePropsWidthDefaults} />
   );
-}
+}));
 
-export default React.memo(React.forwardRef(Circle));
+export default Circle;

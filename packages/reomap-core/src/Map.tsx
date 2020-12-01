@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, Ref } from 'react';
+import React, { useRef, useCallback, useEffect, forwardRef } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { MapProvider, createContextState } from './context';
 import { TILE_SIZE, LatLng, point, latLng, latLngToPixel, pixelToLatLng } from './common';
@@ -30,7 +30,7 @@ function defaultGetZoomDelta(wheelDelta: number) {
 
 function noop() { }
 
-function Map(props: Props, publicRef: Ref<HTMLDivElement>) {
+const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
   const {
     style,
     className,
@@ -125,6 +125,6 @@ function Map(props: Props, publicRef: Ref<HTMLDivElement>) {
       )}
     </div>
   );
-}
+});
 
-export default React.forwardRef(Map);
+export default Map;

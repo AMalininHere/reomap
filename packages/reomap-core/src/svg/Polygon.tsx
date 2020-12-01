@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React, { forwardRef, memo } from 'react';
 import { useMapContext } from '../context';
 import { LatLng, Point } from '../common';
 
@@ -8,13 +8,15 @@ function makeSvgPath(points: Point[]) {
     .join(' ') + 'z';
 }
 
-interface Props {
+type GeoProps = {
   positions: LatLng[][];
-}
+};
 
-type PathProps = Omit<React.SVGProps<SVGPathElement>, 'fillRule' | 'd'>;
+type PathProps = Omit<React.SVGProps<SVGPathElement>, 'fillRule' | 'd' | 'ref'>;
 
-function Polygon(props: Props & PathProps, ref: Ref<SVGPathElement>) {
+type Props = PathProps & GeoProps;
+
+const Polygon = memo(forwardRef<SVGPathElement, Props>(function Polygon(props, ref) {
   const {
     positions,
     ...pathProps
@@ -38,6 +40,6 @@ function Polygon(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   return (
     <path ref={ref} fillRule="evenodd" d={pathString} {...pathPropsWitdhDefaults} />
   );
-}
+}));
 
-export default React.memo(React.forwardRef(Polygon));
+export default Polygon;

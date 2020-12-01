@@ -5,8 +5,7 @@
     "noEmit": false,
     "emitDeclarationOnly": true,
     "outDir": "build",
-    "rootDir": "./src",
-    "types": ["react"]
+    "rootDir": "./src"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

@@ -1,8 +1,8 @@
-import React, { useState, Ref, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, forwardRef } from 'react';
 
 type Props = React.ImgHTMLAttributes<HTMLImageElement>;
 
-function Tile({ style, onLoad, src, ...props }: Props, ref: Ref<HTMLImageElement>) {
+const Tile = forwardRef<HTMLImageElement, Props>(function Tile({ style, onLoad, src, ...props }, ref) {
   const [ loaded, setLoaded ] = useState(false);
 
   const prevSrc = useRef(src);
@@ -30,6 +30,6 @@ function Tile({ style, onLoad, src, ...props }: Props, ref: Ref<HTMLImageElement
   return (
     <img ref={ref} style={style} onLoad={handleLoad} src={src} {...props}/>
   );
-}
+});
 
-export default React.forwardRef(Tile);
+export default Tile;

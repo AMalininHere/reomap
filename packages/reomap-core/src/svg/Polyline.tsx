@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React, { forwardRef, memo } from 'react';
 import { useMapContext } from '../context';
 import { LatLng, Point } from '../common';
 
@@ -32,13 +32,15 @@ function makeSvgPath(points: Point[]) {
 
 }
 
-interface Props {
+interface GeoProps {
   positions: LatLng[];
 }
 
-type PathProps = Omit<React.SVGProps<SVGPathElement>, 'fill' | 'd'>;
+type PathProps = Omit<React.SVGProps<SVGPathElement>, 'fill' | 'd' | 'ref'>;
 
-function Polyline(props: Props & PathProps, ref: Ref<SVGPathElement>) {
+type Props = PathProps & GeoProps;
+
+const Polyline = memo(forwardRef<SVGPathElement, Props>(function Polyline(props, ref) {
   const {
     positions,
     ...pathProps
@@ -56,6 +58,6 @@ function Polyline(props: Props & PathProps, ref: Ref<SVGPathElement>) {
   return (
     <path ref={ref} fill="none" d={pathString} {...pathPropsWitdhDefaults} />
   );
-}
+}));
 
-export default React.memo(React.forwardRef(Polyline));
+export default Polyline;
