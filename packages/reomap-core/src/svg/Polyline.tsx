@@ -1,6 +1,6 @@
 import React, { ComponentType, forwardRef, memo, RefAttributes } from 'react';
-import { useMapContext } from '../context';
 import { LatLng, Point } from '../common';
+import { useSvgLayerContext } from './context';
 
 function makeSvgPath(points: Point[]) {
   if (!points.length) {
@@ -45,9 +45,10 @@ const Polyline = memo(forwardRef<SVGPathElement, PathProps & GeoProps>(function 
     positions,
     ...pathProps
   } = props;
-  const mapContext = useMapContext();
 
-  const pathString = makeSvgPath(positions.map(mapContext.latLngToPixel));
+  const { latLngToPixel } = useSvgLayerContext();
+
+  const pathString = makeSvgPath(positions.map(latLngToPixel));
 
   return (
     <path

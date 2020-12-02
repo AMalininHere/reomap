@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useMemo } from 'react';
-import { useMapContext, MapProvider, createContextState } from '../context';
+import { useMapContext, createContextState } from '../context';
+import { SvgLayerProvider } from './context';
 import Layer from '../Layer';
 import { TILE_SIZE, LatLng } from '../common';
 import { lng2tile, lat2tile } from '../utils/geo-fns';
@@ -26,9 +27,9 @@ function SvgLayer(props: PropsWithChildren<Props>) {
   return (
     <Layer>
       <svg width={ctx.width} height={ctx.height} viewBox={viewBoxValues}>
-        <MapProvider value={relativeContextData}>
+        <SvgLayerProvider value={relativeContextData}>
           {children}
-        </MapProvider>
+        </SvgLayerProvider>
       </svg>
     </Layer>
   );

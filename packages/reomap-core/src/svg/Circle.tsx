@@ -1,6 +1,6 @@
 import React, { ComponentType, forwardRef, memo, RefAttributes } from 'react';
-import { useMapContext } from '../context';
 import { LatLng } from '../common';
+import { useSvgLayerContext } from './context';
 
 type GeoProps = {
   center: LatLng;
@@ -17,9 +17,10 @@ const Circle = memo(forwardRef<SVGCircleElement, CirlceProps & GeoProps>(functio
     radius,
     ...circleProps
   } = props;
-  const mapContext = useMapContext();
 
-  const point = mapContext.latLngToPixel(center);
+  const { latLngToPixel } = useSvgLayerContext();
+
+  const point = latLngToPixel(center);
 
   return (
     <circle
