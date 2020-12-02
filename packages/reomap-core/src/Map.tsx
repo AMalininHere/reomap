@@ -43,7 +43,6 @@ const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
   const innerRef = useRef<HTMLDivElement>(null);
   const [width, height] = useContainerWidthHeight(innerRef);
 
-  const mapContextData = createContextState(center, zoom, width, height);
   const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
 
   const moveStartedRef = useRef(false);
@@ -65,20 +64,20 @@ const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
   });
 
   const mouseMoveRef = useSyncRef((e: MouseEvent) => {
-    if (moveStartedRef.current && props.onChangeCenterZoom) {
+    if (moveStartedRef.current && onChangeCenterZoom) {
       e.preventDefault();
       const lat = tile2lat(lat2tile(center.lat, zoom) - (e.movementY / TILE_SIZE), zoom);
       const lng = tile2lng(lng2tile(center.lng, zoom) - (e.movementX / TILE_SIZE), zoom);
       const result = latLng(lat, lng);
-      props.onChangeCenterZoom(result, zoom);
+      onChangeCenterZoom(result, zoom);
     }
   });
 
   const handleWheelRef = useSyncRef((e: WheelEvent) => {
     e.preventDefault();
 
-    const mouseLatLng = mapContextData.pixelToLatLng(getMousePoint(innerRef.current!, e));
-    const newZoom = mapContextData.zoom + getZoomDelta(e.deltaY);
+    const mouseLatLng = pixelToLatLng(width, height, zoom, center, getMousePoint(innerRef.current!, e));
+    const newZoom = zoom + getZoomDelta(e.deltaY);
 
     const pixelBefore = latLngToPixel(width, height, zoom, center, mouseLatLng);
     const pixelAfter = latLngToPixel(width, height, newZoom, center, mouseLatLng);
@@ -119,7 +118,7 @@ const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
       onMouseDown={handleMouseDown}
     >
       {width > 0 && height > 0 && (
-        <MapProvider value={mapContextData}>
+        <MapProvider value={createContextState(center, zoom, width, height)}>
           {props.children}
         </MapProvider>
       )}
