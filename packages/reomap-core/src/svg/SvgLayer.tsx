@@ -1,20 +1,25 @@
-import React, { PropsWithChildren, useMemo } from 'react';
+import React, { PropsWithChildren, SVGProps, useMemo } from 'react';
 import { useMapContext, createContextState } from '../context';
 import { SvgLayerProvider } from './context';
 import Layer from '../Layer';
 import { TILE_SIZE, LatLng } from '../common';
 import { lng2tile, lat2tile } from '../utils/geo-fns';
 
+type SvgProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height' | 'viewBox'>
+
 interface Props {
   center?: LatLng;
 }
 
-function SvgLayer(props: PropsWithChildren<Props>) {
+function SvgLayer(props: PropsWithChildren<Props & SvgProps>) {
   const ctx = useMapContext();
+
   const {
     center = ctx.center,
     children,
+    ...svgProps
   } = props;
+
   const relativeContextData = useMemo(
     () => createContextState(center, ctx.zoom, 0, 0),
     [center, ctx.zoom]
@@ -26,7 +31,12 @@ function SvgLayer(props: PropsWithChildren<Props>) {
 
   return (
     <Layer>
-      <svg width={ctx.width} height={ctx.height} viewBox={viewBoxValues}>
+      <svg
+        {...svgProps}
+        width={ctx.width}
+        height={ctx.height}
+        viewBox={viewBoxValues}
+      >
         <SvgLayerProvider value={relativeContextData}>
           {children}
         </SvgLayerProvider>
