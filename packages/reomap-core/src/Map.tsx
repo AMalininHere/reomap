@@ -1,8 +1,14 @@
-import React, { useRef, useCallback, useEffect, forwardRef } from 'react';
+import React, { useRef, useCallback, useEffect, forwardRef, useState } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { MapProvider, createContextState } from './context';
 import { TILE_SIZE, LatLng, point, latLng, latLngToPixel, pixelToLatLng } from './common';
 import { useThrottleCallback, useSyncRef, useContainerWidthHeight, useForkRef } from './utils/hooks';
+
+enum DragState {
+  None = 0,
+  Prepared = 1,
+  Dragged = 2,
+}
 
 function getMousePoint(domElement: HTMLElement, event: React.MouseEvent | MouseEvent) {
   const elementRect = domElement.getBoundingClientRect();
@@ -45,7 +51,7 @@ const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
 
   const throttledOnChangeCenterZoom = useThrottleCallback(onChangeCenterZoom, 150);
 
-  const moveStartedRef = useRef(false);
+  const [ dragState, setDragState ] = useState(DragState.None);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) {
@@ -53,18 +59,21 @@ const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
     }
 
     e.preventDefault();
-    moveStartedRef.current = true;
+    setDragState(DragState.Prepared);
   }, []);
 
   const mouseUpRef = useSyncRef((e: MouseEvent) => {
-    if (moveStartedRef.current) {
+    if (dragState) {
       e.preventDefault();
-      moveStartedRef.current = false;
+      setDragState(DragState.None);
     }
   });
 
   const mouseMoveRef = useSyncRef((e: MouseEvent) => {
-    if (moveStartedRef.current && onChangeCenterZoom) {
+    if (dragState !== DragState.None && onChangeCenterZoom) {
+      if (dragState === DragState.Prepared) {
+        setDragState(DragState.Dragged);
+      }
       e.preventDefault();
       const lat = tile2lat(lat2tile(center.lat, zoom) - (e.movementY / TILE_SIZE), zoom);
       const lng = tile2lng(lng2tile(center.lng, zoom) - (e.movementX / TILE_SIZE), zoom);
@@ -118,7 +127,7 @@ const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
       onMouseDown={handleMouseDown}
     >
       {width > 0 && height > 0 && (
-        <MapProvider value={createContextState(center, zoom, width, height)}>
+        <MapProvider value={createContextState(center, zoom, width, height, dragState === DragState.Dragged)}>
           {props.children}
         </MapProvider>
       )}
