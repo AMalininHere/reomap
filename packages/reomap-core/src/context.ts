@@ -23,6 +23,7 @@ export function createContextState(center: LatLng, zoom: number, width: number, 
 }
 
 const ctx = React.createContext<ContextState>(null!);
+ctx.displayName = 'MapContext';
 
 export const MapProvider = ctx.Provider;
 
