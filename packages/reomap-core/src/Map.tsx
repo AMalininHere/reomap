@@ -113,7 +113,7 @@ const Map = forwardRef<HTMLDivElement, Props>(function Map(props, publicRef) {
 
   return (
     <div
-      style={{ position: 'relative', overflow: 'hidden', ...style }}
+      style={{ ...style, position: 'relative', overflow: 'hidden' }}
       className={className}
       ref={elementRef}
       onMouseDown={handleMouseDown}
