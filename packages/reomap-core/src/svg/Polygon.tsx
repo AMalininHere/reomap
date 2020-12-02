@@ -1,12 +1,7 @@
 import React, { ComponentType, forwardRef, memo, RefAttributes } from 'react';
-import { LatLng, Point } from '../common';
+import { LatLng } from '../common';
 import { useSvgLayerContext } from './context';
-
-function makeSvgPath(points: Point[]) {
-  return points
-    .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${Math.round(p.x)} ${Math.round(p.y)}`)
-    .join(' ') + 'z';
-}
+import { makeSvgPath } from './utils';
 
 type GeoProps = {
   positions: LatLng[][];
@@ -26,7 +21,7 @@ const Polygon = memo(forwardRef<SVGPathElement, PathProps & GeoProps>(function P
 
   const pathString = positions
     .map(subPositions => subPositions.map(latLngToPixel))
-    .map(makeSvgPath)
+    .map(points => `${makeSvgPath(points)} Z`)
     .join(' ');
 
   return (
