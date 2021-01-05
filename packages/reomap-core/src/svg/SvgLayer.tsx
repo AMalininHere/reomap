@@ -1,7 +1,6 @@
 import React, { PropsWithChildren, SVGProps, useMemo } from 'react';
 import { useMapContext, createContextState } from '../context';
 import { SvgLayerProvider } from './context';
-import Layer from '../Layer';
 import { TILE_SIZE, LatLng } from '../common';
 import { lng2tile, lat2tile } from '../utils/geo-fns';
 
@@ -17,6 +16,7 @@ function SvgLayer(props: PropsWithChildren<Props & SvgProps>) {
   const {
     center = ctx.center,
     children,
+    style,
     ...svgProps
   } = props;
 
@@ -30,18 +30,17 @@ function SvgLayer(props: PropsWithChildren<Props & SvgProps>) {
   const viewBoxValues = `${-Math.round(offsetX)} ${-Math.round(offsetY)} ${ctx.width} ${ctx.height}`;
 
   return (
-    <Layer>
-      <svg
-        {...svgProps}
-        width={ctx.width}
-        height={ctx.height}
-        viewBox={viewBoxValues}
-      >
-        <SvgLayerProvider value={relativeContextData}>
-          {children}
-        </SvgLayerProvider>
-      </svg>
-    </Layer>
+    <svg
+      {...svgProps}
+      style={{ ...style, left: 0, top: 0, position: 'absolute' }}
+      width={ctx.width}
+      height={ctx.height}
+      viewBox={viewBoxValues}
+    >
+      <SvgLayerProvider value={relativeContextData}>
+        {children}
+      </SvgLayerProvider>
+    </svg>
   );
 }
 
