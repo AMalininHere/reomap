@@ -15,7 +15,7 @@ const Tile = forwardRef<HTMLImageElement, Props>(function Tile({ style, onLoad, 
     prevSrc.current = src;
   }, [src]);
 
-  const handleLoad = useCallback<Required<Props>['onLoad']>(e => {
+  const handleLoad = useCallback<NonNullable<Props['onLoad']>>(e => {
     setLoaded(true);
     return onLoad?.(e);
   }, [ onLoad ]);

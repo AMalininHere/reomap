@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Circle should render 1`] = `
+<div>
+  <svg>
+    <circle
+      cx="485"
+      cy="433"
+      fill="#555555"
+      r="5"
+    />
+  </svg>
+</div>
+`;

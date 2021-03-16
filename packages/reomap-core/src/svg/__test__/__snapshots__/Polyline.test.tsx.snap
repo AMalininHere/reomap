@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Polyline should render 1`] = `
+<div>
+  <svg>
+    <path
+      d="M293 331 L381 270 L437 304 L442 359 L466 417 L485 433"
+      fill="none"
+      stroke="#555555"
+      stroke-width="2"
+    />
+  </svg>
+</div>
+`;
