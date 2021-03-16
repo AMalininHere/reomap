@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Polygon should render 1`] = `
+<div>
+  <svg>
+    <path
+      d="M186 390 L292 524 L516 493 L559 291 L283 187 L186 390 Z M270 398 L267 332 L319 267 L407 262 L511 297 L496 456 L390 480 L270 398 Z"
+      fill="#555555"
+      fill-opacity="0.5"
+      fill-rule="evenodd"
+      stroke="#555555"
+      stroke-width="2"
+    />
+  </svg>
+</div>
+`;
