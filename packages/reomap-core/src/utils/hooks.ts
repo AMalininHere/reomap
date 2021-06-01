@@ -1,5 +1,4 @@
 import { useEffect, useRef, useCallback, useLayoutEffect, useState, useMemo } from 'react';
-import ResizeObserver from 'resize-observer-polyfill';
 
 export function useThrottleCallback<T extends (...args: any[]) => any>(fn: T, ms: number) {
   const activeThrottling = useRef<number>(0);
