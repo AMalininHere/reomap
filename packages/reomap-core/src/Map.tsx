@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, forwardRef, useState } from 'react';
+import { useRef, useCallback, useEffect, forwardRef, useState } from 'react';
 import { lng2tile, lat2tile, tile2lat, tile2lng } from './utils/geo-fns';
 import { MapProvider, createContextState } from './context';
 import { TILE_SIZE, LatLng, point, latLng, latLngToPixel, pixelToLatLng } from './common';

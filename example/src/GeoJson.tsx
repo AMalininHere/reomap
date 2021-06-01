@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import * as G from 'geojson';
 import { latLng, LatLng } from '@reomap/core';
 import { SvgLayer, Circle, Polygon, Polyline } from '@reomap/core/svg';

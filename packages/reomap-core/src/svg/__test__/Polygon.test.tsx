@@ -1,4 +1,3 @@
-import React from 'react';
 import { render } from '@testing-library/react';
 import Polygon from '../Polygon';
 import { SvgLayerProvider } from '../context';

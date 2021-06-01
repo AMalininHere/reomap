@@ -1,4 +1,3 @@
-import React from 'react';
 import { lng2tile, lat2tile } from './utils/geo-fns';
 import { useMapContext } from './context';
 import { TILE_SIZE } from './common';

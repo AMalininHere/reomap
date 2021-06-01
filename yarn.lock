@@ -57,7 +57,7 @@
     semver "^6.3.0"
     source-map "^0.5.0"
 
-"@babel/core@^7.12.13", "@babel/core@^7.14.0", "@babel/core@^7.7.2":
+"@babel/core@^7.12.13", "@babel/core@^7.14.0", "@babel/core@^7.14.3", "@babel/core@^7.7.2":
   version "7.14.3"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.14.3.tgz#5395e30405f0776067fbd9cf0884f15bfb770a38"
   integrity sha512-jB5AmTKOCSJIZ72sd78ECEhuPiDMKlQdDI/4QRI6lzYATx5SSogS1oQA2AoPecRCknm30gHi2l+QVvNUu3wZAg==
@@ -911,7 +911,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.13.0"
 
-"@babel/plugin-transform-react-jsx@^7.12.17", "@babel/plugin-transform-react-jsx@^7.13.12":
+"@babel/plugin-transform-react-jsx@^7.12.17", "@babel/plugin-transform-react-jsx@^7.13.12", "@babel/plugin-transform-react-jsx@^7.14.3":
   version "7.14.3"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.14.3.tgz#0e26597805cf0862da735f264550933c38babb66"
   integrity sha512-uuxuoUNVhdgYzERiHHFkE4dWoJx+UFVyuAl0aqN8P2/AKFHwqgUC5w2+4/PjpKXJsFgBlYAFXlUmDQ3k3DUkXw==
@@ -4694,6 +4694,17 @@ v8-to-istanbul@^7.0.0:
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^1.6.0"
     source-map "^0.7.3"
+
+vite-react-jsx@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vite-react-jsx/-/vite-react-jsx-1.1.0.tgz#04a638a138e017da05f2f9301296d5c5c431a818"
+  integrity sha512-08EcsIDQ+P2LiYkFEkUMvudSUZp82JHHOmiqn2Mi/pNu0xbNypiXfx8Xxp9opgNapAbQCCwLA8UEyAcG1qDfyg==
+  dependencies:
+    "@babel/core" "^7.14.3"
+    "@babel/plugin-syntax-jsx" "^7.12.13"
+    "@babel/plugin-syntax-typescript" "^7.12.13"
+    "@babel/plugin-transform-react-jsx" "^7.14.3"
+    resolve "^1.20.0"
 
 vite-tsconfig-paths@^3.3.13:
   version "3.3.13"

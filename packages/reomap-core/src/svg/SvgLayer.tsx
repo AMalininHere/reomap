@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, SVGProps, useMemo } from 'react';
+import { PropsWithChildren, SVGProps, useMemo } from 'react';
 import { useMapContext, createContextState } from '../context';
 import { SvgLayerProvider } from './context';
 import { TILE_SIZE, LatLng } from '../common';

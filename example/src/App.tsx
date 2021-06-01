@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { latLng, Map, TileLayer } from '@reomap/core';
 import GeoJson from './GeoJson';
 

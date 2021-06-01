@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { ContextState } from '../context';
 
-const ctx = React.createContext<ContextState>(null!);
+const ctx = createContext<ContextState>(null!);
 ctx.displayName = 'SvgLayerContext';
 
 export const SvgLayerProvider = ctx.Provider;

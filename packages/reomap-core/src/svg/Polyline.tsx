@@ -1,4 +1,4 @@
-import React, { ComponentType, forwardRef, memo, Ref, RefAttributes } from 'react';
+import { ComponentType, forwardRef, memo, Ref, RefAttributes } from 'react';
 import { LatLng } from '../common';
 import { useSvgLayerContext } from './context';
 import { makeSvgPath } from './utils';

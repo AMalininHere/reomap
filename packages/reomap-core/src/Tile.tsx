@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef, forwardRef } from 'react';
+import { useState, useCallback, useEffect, useRef, forwardRef } from 'react';
 
 type Props = React.ImgHTMLAttributes<HTMLImageElement>;
 

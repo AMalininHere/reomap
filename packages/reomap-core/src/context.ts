@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { LatLng, Point, latLngToPixel, pixelToLatLng } from './common';
 
 export interface ContextState {
@@ -24,7 +24,7 @@ export function createContextState(center: LatLng, zoom: number, width: number, 
   };
 }
 
-const ctx = React.createContext<ContextState>(null!);
+const ctx = createContext<ContextState>(null!);
 ctx.displayName = 'MapContext';
 
 export const MapProvider = ctx.Provider;
