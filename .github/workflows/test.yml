@@ -16,6 +16,5 @@ jobs:
         node-version: '12'
     - run: yarn install
     - run: yarn test
-    - run: |
-        cd ./packages/reomap-core
-        yarn build
+    - run: yarn build
+      working-directory: packages/reomap-core
